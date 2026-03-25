@@ -1,0 +1,1551 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoScore — Porovnávač áut</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #18181f;
+    --bg4: #22222c;
+    --border: #2a2a38;
+    --border2: #353545;
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #5a5a70;
+    --accent: #f0a500;
+    --accent2: #ff6b35;
+    --accent3: #00d4aa;
+    --green: #22c55e;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --score-high: #22c55e;
+    --score-mid: #f0a500;
+    --score-low: #ef4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+  .logo span { color: var(--text); }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 16px 24px 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  /* MAIN */
+  main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+  /* VIEWS */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+  .btn-primary:hover { background: #e09800; }
+  .btn-secondary {
+    background: var(--bg4);
+    color: var(--text);
+    border: 1px solid var(--border2);
+  }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-ghost {
+    background: none;
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+  .btn-danger {
+    background: rgba(239,68,68,0.15);
+    color: var(--red);
+    border: 1px solid rgba(239,68,68,0.3);
+  }
+  .btn-danger:hover { background: rgba(239,68,68,0.25); }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* CARS GRID - Overview */
+  .cars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .car-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .car-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+  .car-card-header {
+    padding: 16px;
+    background: var(--bg3);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .car-card-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    line-height: 1.1;
+  }
+  .car-card-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  .score-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .score-badge .score-label { font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 500; letter-spacing: 1px; }
+  .score-high { background: rgba(34,197,94,0.15); color: var(--green); border: 2px solid rgba(34,197,94,0.4); }
+  .score-mid { background: rgba(240,165,0,0.15); color: var(--accent); border: 2px solid rgba(240,165,0,0.4); }
+  .score-low { background: rgba(239,68,68,0.15); color: var(--red); border: 2px solid rgba(239,68,68,0.3); }
+
+  .car-card-body { padding: 14px 16px; }
+  .car-mini-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .mini-stat { }
+  .mini-stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+  .mini-stat-value { font-size: 14px; font-weight: 500; margin-top: 1px; }
+
+  .score-bar {
+    height: 4px;
+    background: var(--bg4);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s ease;
+  }
+
+  .car-card-actions {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ADD CAR MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 540px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(20px);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: var(--bg2);
+    z-index: 1;
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-body { padding: 24px; }
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    position: sticky;
+    bottom: 0;
+    background: var(--bg2);
+  }
+
+  /* FORM */
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .form-input, .form-select {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  .form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .form-input::placeholder { color: var(--text3); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+  .ai-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: rgba(240,165,0,0.08);
+    border: 1px solid rgba(240,165,0,0.2);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(240,165,0,0.3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .section-divider {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 20px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* DETAIL VIEW */
+  .detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text2);
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    transition: color 0.2s;
+  }
+  .detail-back:hover { color: var(--text); }
+
+  .detail-header {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .detail-car-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+  .detail-car-sub { color: var(--text2); margin-top: 4px; font-size: 15px; }
+
+  .detail-score-big {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .detail-score-number {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    line-height: 1;
+  }
+  .detail-score-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .detail-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .detail-section-header {
+    padding: 12px 16px;
+    background: var(--bg3);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-rows { }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row-label { font-size: 13px; color: var(--text2); flex: 1; }
+  .detail-row-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: right;
+  }
+  .detail-row-input {
+    background: var(--bg4);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    width: 120px;
+    text-align: right;
+  }
+  .detail-row-input:focus { outline: none; border-color: var(--accent); }
+
+  /* SCORE BREAKDOWN */
+  .score-breakdown {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .breakdown-header {
+    padding: 14px 20px;
+    background: var(--bg3);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+  }
+  .breakdown-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .breakdown-item:last-child { border-bottom: none; }
+  .breakdown-name { font-size: 13px; flex: 1; }
+  .breakdown-bar-wrap { flex: 2; height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+  .breakdown-bar { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .breakdown-score { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; width: 60px; text-align: right; }
+  .breakdown-weight { font-size: 11px; color: var(--text3); width: 40px; text-align: right; }
+
+  /* AI REASON */
+  .ai-reason {
+    background: rgba(240,165,0,0.06);
+    border: 1px solid rgba(240,165,0,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text2);
+  }
+  .ai-reason strong { color: var(--accent); }
+
+  /* SUMMARY VIEW */
+  .summary-podium {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    align-items: flex-end;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .podium-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    min-width: 160px;
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+  .podium-item:hover { transform: translateY(-4px); }
+  .podium-item.first {
+    border-color: var(--accent);
+    background: rgba(240,165,0,0.07);
+    order: 2;
+    padding-top: 24px;
+  }
+  .podium-item.second { order: 1; }
+  .podium-item.third { order: 3; }
+  .podium-rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--text3);
+  }
+  .podium-item.first .podium-rank { font-size: 56px; color: var(--accent); }
+  .podium-name { font-weight: 600; font-size: 13px; margin-top: 4px; }
+  .podium-sub { font-size: 11px; color: var(--text2); }
+  .podium-score { font-family: 'Bebas Neue', sans-serif; font-size: 32px; margin-top: 8px; }
+  .podium-item.first .podium-score { font-size: 40px; color: var(--accent); }
+
+  .summary-table {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .summary-table-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 80px;
+    padding: 10px 16px;
+    background: var(--bg3);
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+  .summary-table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 80px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .summary-table-row:last-child { border-bottom: none; }
+  .summary-table-row:hover { background: var(--bg3); }
+  .summary-car-info { }
+  .summary-car-name { font-weight: 600; font-size: 14px; }
+  .summary-car-sub { font-size: 12px; color: var(--text2); }
+  .summary-cell { font-family: 'DM Mono', monospace; font-size: 13px; }
+  .summary-score-cell { display: flex; align-items: center; gap: 8px; }
+  .summary-score-num { font-family: 'Bebas Neue', sans-serif; font-size: 22px; }
+  .rank-badge {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rank-1 { background: rgba(240,165,0,0.2); color: var(--accent); }
+  .rank-2 { background: rgba(148,163,184,0.2); color: #94a3b8; }
+  .rank-3 { background: rgba(180,120,60,0.2); color: #b4783c; }
+
+  /* WEIGHTS PANEL */
+  .weights-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .weights-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .weights-sub { font-size: 12px; color: var(--text2); margin-bottom: 16px; }
+  .weights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .weight-item { }
+  .weight-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .weight-item-label { font-size: 13px; }
+  .weight-item-value { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent); }
+  .weight-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--bg4);
+    outline: none;
+  }
+  .weight-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; margin-bottom: 8px; }
+  .empty-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; }
+
+  /* TAG */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .tag-petrol { background: rgba(239,68,68,0.15); color: #f87171; }
+  .tag-diesel { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .tag-hybrid { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .tag-electric { background: rgba(168,85,247,0.15); color: #c084fc; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-color: rgba(34,197,94,0.4); }
+  .toast.error { border-color: rgba(239,68,68,0.4); }
+
+  /* API KEY BANNER */
+  .api-key-banner {
+    background: rgba(240,165,0,0.08);
+    border: 1px solid rgba(240,165,0,0.25);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .api-key-banner .api-key-text { flex: 1; color: var(--text2); min-width: 200px; }
+  .api-key-input-wrap { display: flex; gap: 8px; align-items: center; }
+  .api-key-input {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    width: 220px;
+  }
+  .api-key-input:focus { outline: none; border-color: var(--accent); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    main { padding: 16px; }
+    .form-row { grid-template-columns: 1fr; }
+    .summary-table-header, .summary-table-row { grid-template-columns: 2fr 1fr 80px; }
+    .summary-table-header > *:nth-child(n+3):not(:last-child),
+    .summary-table-row > *:nth-child(n+3):not(:last-child) { display: none; }
+    .detail-car-name { font-size: 28px; }
+    .detail-score-number { font-size: 52px; }
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .page-sub { font-size: 13px; color: var(--text2); }
+  .page-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Auto<span>Score</span></div>
+  <div class="header-actions">
+    <button class="btn btn-primary" onclick="openAddCarModal()">+ Pridať auto</button>
+  </div>
+</header>
+
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="showView('cars', this)">🚗 Autá</button>
+  <button class="tab-btn" onclick="showView('summary', this)">📊 Zhrnutie</button>
+  <button class="tab-btn" onclick="showView('weights', this)">⚖️ Váhy</button>
+</div>
+
+<main>
+
+  <!-- API KEY BANNER -->
+  <div class="api-key-banner" id="apiKeyBanner">
+    <span style="font-size:18px">🔑</span>
+    <div class="api-key-text">
+      Pre AI dopĺňanie parametrov zadaj svoj <strong>Anthropic API kľúč</strong> (uloží sa len v prehliadači).
+    </div>
+    <div class="api-key-input-wrap">
+      <input class="api-key-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+      <button class="btn btn-sm btn-secondary" onclick="saveApiKey()">Uložiť</button>
+    </div>
+  </div>
+
+  <!-- VIEW: CARS -->
+  <div class="view active" id="view-cars">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Moje autá</div>
+        <div class="page-sub" id="carCount">Zatiaľ žiadne autá</div>
+      </div>
+    </div>
+
+    <div class="cars-grid" id="carsGrid">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🚗</div>
+        <div class="empty-title">Žiadne autá</div>
+        <div class="empty-sub">Pridaj prvé auto a začni porovnávať</div>
+        <button class="btn btn-primary" onclick="openAddCarModal()">+ Pridať auto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: SUMMARY -->
+  <div class="view" id="view-summary">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Zhrnutie & Odporúčanie</div>
+        <div class="page-sub">Porovnanie všetkých áut podľa tvojho profilu</div>
+      </div>
+    </div>
+    <div id="summaryContent">
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <div class="empty-title">Najprv pridaj autá</div>
+        <div class="empty-sub">Keď pridáš aspoň jedno auto, uvidíš tu zhrnutie</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW: WEIGHTS -->
+  <div class="view" id="view-weights">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Váhy parametrov</div>
+        <div class="page-sub">Nastav dôležitosť každého parametra pre tvoje skóre (súčet = 100%)</div>
+      </div>
+      <button class="btn btn-secondary" onclick="resetWeights()">↺ Reset na odporúčané</button>
+    </div>
+    <div class="weights-panel">
+      <div class="weights-title">Tvoj profil: Rodinné auto 🏠</div>
+      <div class="weights-sub">Váhy sú nastavené pre rodinné auto s prioritou spoľahlivosť, priestor, výbava a výkon.</div>
+      <div class="weights-grid" id="weightsGrid"></div>
+    </div>
+    <div style="text-align:center; color: var(--text3); font-size:13px;" id="weightsTotalDisplay"></div>
+  </div>
+
+  <!-- VIEW: DETAIL (hidden by default) -->
+  <div class="view" id="view-detail">
+    <div class="detail-back" onclick="showView('cars', document.querySelector('.tab-btn'))">← Späť na autá</div>
+    <div id="detailContent"></div>
+  </div>
+
+</main>
+
+<!-- ADD CAR MODAL -->
+<div class="modal-overlay" id="addCarModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Pridať nové auto</div>
+      <button class="modal-close" onclick="closeAddCarModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Značka *</label>
+          <input class="form-input" id="inp-make" placeholder="napr. Volkswagen" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Model *</label>
+          <input class="form-input" id="inp-model" placeholder="napr. Passat" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Rok</label>
+          <input class="form-input" id="inp-year" placeholder="napr. 2024" type="number" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Motor / Verzia</label>
+          <input class="form-input" id="inp-engine" placeholder="napr. 2.0 TDI 150 DSG" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kúpna cena (€) *</label>
+        <input class="form-input" id="inp-price" placeholder="napr. 42000" type="number" />
+      </div>
+
+      <div id="aiLoadingBar" style="display:none">
+        <div class="ai-loading">
+          <div class="spinner"></div>
+          <span id="aiLoadingText">AI dopĺňa parametre auta...</span>
+        </div>
+      </div>
+
+      <div id="aiFieldsSection" style="display:none">
+        <div class="section-divider">AI doplnené — uprav podľa potreby</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Výkon (kW)</label>
+            <input class="form-input" id="inp-power" type="number" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Spotreba (l/100km alebo kWh)</label>
+            <input class="form-input" id="inp-consumption" type="number" step="0.1" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Objem kufra (l)</label>
+            <input class="form-input" id="inp-trunk" type="number" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Počet miest</label>
+            <input class="form-input" id="inp-seats" type="number" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Dĺžka × Šírka (cm)</label>
+            <input class="form-input" id="inp-dimensions" placeholder="napr. 477 x 183" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Typ paliva</label>
+            <select class="form-select" id="inp-fuel">
+              <option value="diesel">Diesel</option>
+              <option value="petrol">Benzín</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="electric">Elektro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Záruka (roky)</label>
+            <input class="form-input" id="inp-warranty" type="number" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Odhadovaná hodnota po 5r (€)</label>
+            <input class="form-input" id="inp-value5y" type="number" />
+          </div>
+        </div>
+
+        <div class="section-divider">Náklady (ročné, €)</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Servisné náklady / rok</label>
+            <input class="form-input" id="inp-service" type="number" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pneumatiky / rok</label>
+            <input class="form-input" id="inp-tyres" type="number" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">KFZ poistenie / rok</label>
+            <input class="form-input" id="inp-kfz" type="number" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kasko poistenie / rok</label>
+            <input class="form-input" id="inp-kasko" type="number" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Leasingová splátka / mesiac (€)</label>
+          <input class="form-input" id="inp-leasing" type="number" />
+          <div class="form-hint">Nechaj prázdne ak kupuješ za hotové</div>
+        </div>
+
+        <div class="section-divider">Subjektívne hodnotenie</div>
+
+        <div class="form-group">
+          <label class="form-label">Subjektívny pocit z auta (1–10)</label>
+          <input class="form-input" id="inp-feeling" type="number" min="1" max="10" placeholder="8" />
+          <div class="form-hint">Dizajn, interiér, pocit z jazdy, prestíž...</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Výbava / technológie (1–10)</label>
+          <input class="form-input" id="inp-equipment" type="number" min="1" max="10" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Poznámky</label>
+          <input class="form-input" id="inp-notes" placeholder="Špeciálne výbavy, farba, zdroj..." />
+        </div>
+      </div>
+
+      <div id="manualToggleSection">
+        <button class="btn btn-ghost" style="width:100%; margin-top:8px" onclick="showManualFields()">Vyplniť manuálne (bez AI)</button>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAddCarModal()">Zrušiť</button>
+      <button class="btn btn-secondary" id="btnFetchAI" onclick="fetchAIData()">🤖 AI doplniť</button>
+      <button class="btn btn-primary" onclick="saveCar()">Uložiť auto</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let cars = JSON.parse(localStorage.getItem('autoscore_cars') || '[]');
+let apiKey = localStorage.getItem('autoscore_apikey') || '';
+
+const DEFAULT_WEIGHTS = {
+  'Cena kúpy': 15,
+  'Hodnota po 5r': 8,
+  'Leasing': 5,
+  'Ročné náklady': 12,
+  'Spotreba': 8,
+  'Záruka': 7,
+  'Priestor / kufor': 12,
+  'Výkon': 8,
+  'Výbava': 10,
+  'Subjektívny pocit': 10,
+  'Spoľahlivosť (palivo)': 5,
+};
+
+let weights = JSON.parse(localStorage.getItem('autoscore_weights') || JSON.stringify(DEFAULT_WEIGHTS));
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+window.onload = () => {
+  if (apiKey) {
+    document.getElementById('apiKeyInput').value = apiKey;
+    document.getElementById('apiKeyBanner').style.display = 'none';
+  }
+  renderWeightsPanel();
+  renderCarsGrid();
+  renderSummary();
+};
+
+// ═══════════════════════════════════════════════════════
+//  API KEY
+// ═══════════════════════════════════════════════════════
+function saveApiKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val) return toast('Zadaj API kľúč', 'error');
+  apiKey = val;
+  localStorage.setItem('autoscore_apikey', apiKey);
+  document.getElementById('apiKeyBanner').style.display = 'none';
+  toast('API kľúč uložený ✓', 'success');
+}
+
+// ═══════════════════════════════════════════════════════
+//  VIEWS
+// ═══════════════════════════════════════════════════════
+function showView(name, tabEl) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  if (tabEl && tabEl.classList.contains('tab-btn')) tabEl.classList.add('active');
+  if (name === 'summary') renderSummary();
+}
+
+function showDetailView(carId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-detail').classList.add('active');
+  renderDetail(carId);
+}
+
+// ═══════════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════════
+function openAddCarModal() {
+  document.getElementById('addCarModal').classList.add('open');
+  document.getElementById('aiFieldsSection').style.display = 'none';
+  document.getElementById('manualToggleSection').style.display = 'block';
+  ['make','model','year','engine','price','power','consumption','trunk','seats','dimensions','fuel','warranty','value5y','service','tyres','kfz','kasko','leasing','feeling','equipment','notes'].forEach(f => {
+    const el = document.getElementById('inp-'+f);
+    if (el) el.value = '';
+  });
+}
+function closeAddCarModal() {
+  document.getElementById('addCarModal').classList.remove('open');
+}
+function showManualFields() {
+  document.getElementById('aiFieldsSection').style.display = 'block';
+  document.getElementById('manualToggleSection').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════
+//  AI FETCH
+// ═══════════════════════════════════════════════════════
+async function fetchAIData() {
+  const make = document.getElementById('inp-make').value.trim();
+  const model = document.getElementById('inp-model').value.trim();
+  const year = document.getElementById('inp-year').value.trim();
+  const engine = document.getElementById('inp-engine').value.trim();
+
+  if (!make || !model) return toast('Zadaj aspoň značku a model', 'error');
+  if (!apiKey) {
+    document.getElementById('apiKeyBanner').style.display = 'flex';
+    return toast('Najprv ulož API kľúč', 'error');
+  }
+
+  document.getElementById('aiLoadingBar').style.display = 'flex';
+  document.getElementById('btnFetchAI').disabled = true;
+
+  const carDesc = `${year} ${make} ${model} ${engine}`.trim();
+
+  const prompt = `Si expert na autá v Rakúsku. Pre auto "${carDesc}" vráť JSON s týmito odhadovanými hodnotami pre rakúsky trh (EUR):
+{
+  "power_kw": číslo (výkon v kW),
+  "consumption": číslo (spotreba l/100km alebo kWh/100km pre elektro),
+  "trunk_l": číslo (objem kufra v litroch),
+  "seats": číslo (počet miest),
+  "dimensions": "DĺžkaxŠírka v cm napr. 477x183",
+  "fuel": "diesel|petrol|hybrid|electric",
+  "warranty_years": číslo,
+  "value_5y_pct": číslo (% zostatkovej hodnoty po 5 rokoch napr. 45),
+  "service_annual": číslo (ročné servisné náklady €),
+  "tyres_annual": číslo (ročné náklady na pneumatiky €),
+  "kfz_annual": číslo (KFZ poistenie ročne € AT),
+  "kasko_annual": číslo (Kasko poistenie ročne € AT),
+  "leasing_monthly": číslo (typická leasingová splátka € pri 48mes/10% záloha) alebo null,
+  "equipment_score": číslo 1-10 (výbava a technológie),
+  "reliability_note": "krátka poznámka k spoľahlivosti"
+}
+Vráť LEN JSON, žiadny iný text.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON');
+    const d = JSON.parse(jsonMatch[0]);
+
+    document.getElementById('inp-power').value = d.power_kw || '';
+    document.getElementById('inp-consumption').value = d.consumption || '';
+    document.getElementById('inp-trunk').value = d.trunk_l || '';
+    document.getElementById('inp-seats').value = d.seats || '';
+    document.getElementById('inp-dimensions').value = d.dimensions || '';
+    document.getElementById('inp-fuel').value = d.fuel || 'petrol';
+    document.getElementById('inp-warranty').value = d.warranty_years || '';
+    document.getElementById('inp-service').value = d.service_annual || '';
+    document.getElementById('inp-tyres').value = d.tyres_annual || '';
+    document.getElementById('inp-kfz').value = d.kfz_annual || '';
+    document.getElementById('inp-kasko').value = d.kasko_annual || '';
+    document.getElementById('inp-leasing').value = d.leasing_monthly || '';
+    document.getElementById('inp-equipment').value = d.equipment_score || '';
+
+    // Compute value after 5y from price
+    const price = parseFloat(document.getElementById('inp-price').value) || 0;
+    if (price && d.value_5y_pct) {
+      document.getElementById('inp-value5y').value = Math.round(price * d.value_5y_pct / 100);
+    }
+
+    document.getElementById('aiFieldsSection').style.display = 'block';
+    document.getElementById('manualToggleSection').style.display = 'none';
+    toast('AI doplnilo parametre ✓ — skontroluj a uprav', 'success');
+  } catch(e) {
+    toast('Chyba AI: ' + e.message, 'error');
+  } finally {
+    document.getElementById('aiLoadingBar').style.display = 'none';
+    document.getElementById('btnFetchAI').disabled = false;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  SAVE CAR
+// ═══════════════════════════════════════════════════════
+function saveCar() {
+  const make = document.getElementById('inp-make').value.trim();
+  const model = document.getElementById('inp-model').value.trim();
+  const price = parseFloat(document.getElementById('inp-price').value);
+  if (!make || !model) return toast('Zadaj značku a model', 'error');
+  if (!price) return toast('Zadaj kúpnu cenu', 'error');
+
+  const car = {
+    id: Date.now(),
+    make, model,
+    year: document.getElementById('inp-year').value || '',
+    engine: document.getElementById('inp-engine').value || '',
+    price,
+    power: parseFloat(document.getElementById('inp-power').value) || null,
+    consumption: parseFloat(document.getElementById('inp-consumption').value) || null,
+    trunk: parseFloat(document.getElementById('inp-trunk').value) || null,
+    seats: parseInt(document.getElementById('inp-seats').value) || null,
+    dimensions: document.getElementById('inp-dimensions').value || '',
+    fuel: document.getElementById('inp-fuel').value || 'petrol',
+    warranty: parseFloat(document.getElementById('inp-warranty').value) || null,
+    value5y: parseFloat(document.getElementById('inp-value5y').value) || null,
+    service: parseFloat(document.getElementById('inp-service').value) || null,
+    tyres: parseFloat(document.getElementById('inp-tyres').value) || null,
+    kfz: parseFloat(document.getElementById('inp-kfz').value) || null,
+    kasko: parseFloat(document.getElementById('inp-kasko').value) || null,
+    leasing: parseFloat(document.getElementById('inp-leasing').value) || null,
+    feeling: parseFloat(document.getElementById('inp-feeling').value) || null,
+    equipment: parseFloat(document.getElementById('inp-equipment').value) || null,
+    notes: document.getElementById('inp-notes').value || '',
+  };
+
+  cars.push(car);
+  saveCars();
+  closeAddCarModal();
+  renderCarsGrid();
+  renderSummary();
+  toast(`${make} ${model} pridaný ✓`, 'success');
+}
+
+function deleteCar(id) {
+  cars = cars.filter(c => c.id !== id);
+  saveCars();
+  renderCarsGrid();
+  renderSummary();
+  toast('Auto odstránené', 'success');
+}
+
+function saveCars() { localStorage.setItem('autoscore_cars', JSON.stringify(cars)); }
+
+// ═══════════════════════════════════════════════════════
+//  SCORING
+// ═══════════════════════════════════════════════════════
+function scoreCar(car, allCars) {
+  // Normalize values 0-100 within the set, then weight
+  const scores = {};
+
+  const prices = allCars.map(c => c.price).filter(Boolean);
+  const minPrice = Math.min(...prices), maxPrice = Math.max(...prices);
+
+  // Helper: invert score (lower is better)
+  const invNorm = (val, min, max) => max === min ? 70 : Math.round((1 - (val - min) / (max - min)) * 100);
+  const norm = (val, min, max) => max === min ? 70 : Math.round(((val - min) / (max - min)) * 100);
+  const clamp = (v) => Math.max(0, Math.min(100, v));
+
+  // Cena kúpy (lower better)
+  scores['Cena kúpy'] = car.price ? clamp(invNorm(car.price, minPrice, maxPrice)) : 50;
+
+  // Hodnota po 5r (higher better)
+  const vals5y = allCars.map(c => c.value5y).filter(Boolean);
+  scores['Hodnota po 5r'] = car.value5y && vals5y.length > 1 ? clamp(norm(car.value5y, Math.min(...vals5y), Math.max(...vals5y))) : (car.value5y ? 60 : 40);
+
+  // Leasing (lower better, null = buying = good)
+  const leasings = allCars.map(c => c.leasing).filter(Boolean);
+  if (!car.leasing) scores['Leasing'] = 80; // buying = less burden
+  else if (leasings.length > 1) scores['Leasing'] = clamp(invNorm(car.leasing, Math.min(...leasings), Math.max(...leasings)));
+  else scores['Leasing'] = 50;
+
+  // Ročné náklady: service + tyres + kfz + kasko
+  const annualCost = (car.service||0) + (car.tyres||0) + (car.kfz||0) + (car.kasko||0);
+  const allAnnual = allCars.map(c => (c.service||0)+(c.tyres||0)+(c.kfz||0)+(c.kasko||0));
+  const minA = Math.min(...allAnnual), maxA = Math.max(...allAnnual);
+  scores['Ročné náklady'] = annualCost ? clamp(invNorm(annualCost, minA, maxA)) : 50;
+
+  // Spotreba (lower better)
+  const cons = allCars.map(c => c.consumption).filter(Boolean);
+  scores['Spotreba'] = car.consumption && cons.length > 1 ? clamp(invNorm(car.consumption, Math.min(...cons), Math.max(...cons))) : (car.consumption ? 60 : 50);
+
+  // Záruka (higher better)
+  const warr = allCars.map(c => c.warranty).filter(Boolean);
+  scores['Záruka'] = car.warranty && warr.length > 1 ? clamp(norm(car.warranty, Math.min(...warr), Math.max(...warr))) : (car.warranty ? 65 : 40);
+
+  // Priestor: trunk + seats
+  const trunks = allCars.map(c => c.trunk).filter(Boolean);
+  const trunkScore = car.trunk && trunks.length > 1 ? clamp(norm(car.trunk, Math.min(...trunks), Math.max(...trunks))) : (car.trunk ? 65 : 50);
+  const seatScore = car.seats ? clamp(((car.seats - 2) / 5) * 100) : 50;
+  scores['Priestor / kufor'] = Math.round((trunkScore + seatScore) / 2);
+
+  // Výkon (higher better)
+  const powers = allCars.map(c => c.power).filter(Boolean);
+  scores['Výkon'] = car.power && powers.length > 1 ? clamp(norm(car.power, Math.min(...powers), Math.max(...powers))) : (car.power ? 65 : 50);
+
+  // Výbava
+  scores['Výbava'] = car.equipment ? clamp(car.equipment * 10) : 50;
+
+  // Subjektívny pocit
+  scores['Subjektívny pocit'] = car.feeling ? clamp(car.feeling * 10) : 50;
+
+  // Spoľahlivosť - based on fuel type
+  const reliabilityMap = { diesel: 72, petrol: 75, hybrid: 68, electric: 65 };
+  scores['Spoľahlivosť (palivo)'] = reliabilityMap[car.fuel] || 65;
+
+  // Weighted total
+  const totalWeight = Object.values(weights).reduce((a,b) => a+b, 0);
+  let total = 0;
+  for (const [key, w] of Object.entries(weights)) {
+    total += (scores[key] || 50) * (w / totalWeight);
+  }
+
+  return { total: Math.round(total), breakdown: scores };
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER CARS GRID
+// ═══════════════════════════════════════════════════════
+function renderCarsGrid() {
+  const grid = document.getElementById('carsGrid');
+  const countEl = document.getElementById('carCount');
+
+  if (cars.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">🚗</div>
+      <div class="empty-title">Žiadne autá</div>
+      <div class="empty-sub">Pridaj prvé auto a začni porovnávať</div>
+      <button class="btn btn-primary" onclick="openAddCarModal()">+ Pridať auto</button>
+    </div>`;
+    countEl.textContent = 'Zatiaľ žiadne autá';
+    return;
+  }
+
+  countEl.textContent = `${cars.length} auto${cars.length > 1 ? (cars.length < 5 ? 'á' : '') : ''}`;
+
+  grid.innerHTML = cars.map(car => {
+    const { total, breakdown } = scoreCar(car, cars);
+    const scoreClass = total >= 70 ? 'score-high' : total >= 50 ? 'score-mid' : 'score-low';
+    const barColor = total >= 70 ? 'var(--green)' : total >= 50 ? 'var(--accent)' : 'var(--red)';
+    const fuelTag = `<span class="tag tag-${car.fuel}">${{diesel:'Diesel',petrol:'Benzín',hybrid:'Hybrid',electric:'Elektro'}[car.fuel]||''}</span>`;
+    const annualCost = (car.service||0)+(car.tyres||0)+(car.kfz||0)+(car.kasko||0);
+
+    return `<div class="car-card" onclick="showDetailView(${car.id})">
+      <div class="car-card-header">
+        <div>
+          <div class="car-card-name">${car.make} ${car.model}</div>
+          <div class="car-card-sub">${car.year || ''} ${car.engine || ''} ${fuelTag}</div>
+        </div>
+        <div class="score-badge ${scoreClass}">
+          <span>${total}</span>
+          <span class="score-label">SKÓRE</span>
+        </div>
+      </div>
+      <div class="car-card-body">
+        <div class="score-bar"><div class="score-bar-fill" style="width:${total}%;background:${barColor}"></div></div>
+        <div class="car-mini-stats">
+          <div class="mini-stat"><div class="mini-stat-label">Cena</div><div class="mini-stat-value">${car.price ? '€'+car.price.toLocaleString() : '—'}</div></div>
+          <div class="mini-stat"><div class="mini-stat-label">Spotreba</div><div class="mini-stat-value">${car.consumption ? car.consumption+'l/100' : '—'}</div></div>
+          <div class="mini-stat"><div class="mini-stat-label">Kufor</div><div class="mini-stat-value">${car.trunk ? car.trunk+'l' : '—'}</div></div>
+          <div class="mini-stat"><div class="mini-stat-label">Náklady/rok</div><div class="mini-stat-value">${annualCost ? '€'+annualCost.toLocaleString() : '—'}</div></div>
+        </div>
+      </div>
+      <div class="car-card-actions" onclick="event.stopPropagation()">
+        <button class="btn btn-secondary btn-sm" style="flex:1" onclick="showDetailView(${car.id})">Detail →</button>
+        <button class="btn btn-danger btn-sm" onclick="if(confirm('Odstrániť?')) deleteCar(${car.id})">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER DETAIL
+// ═══════════════════════════════════════════════════════
+function renderDetail(carId) {
+  const car = cars.find(c => c.id === carId);
+  if (!car) return;
+  const { total, breakdown } = scoreCar(car, cars);
+  const scoreClass = total >= 70 ? 'score-high' : total >= 50 ? 'score-mid' : 'score-low';
+  const barColor = total >= 70 ? 'var(--green)' : total >= 50 ? 'var(--accent)' : 'var(--red)';
+  const annualCost = (car.service||0)+(car.tyres||0)+(car.kfz||0)+(car.kasko||0);
+  const fuelLabels = {diesel:'Diesel',petrol:'Benzín',hybrid:'Hybrid',electric:'Elektro'};
+
+  const breakdownHTML = Object.entries(breakdown).map(([key, val]) => {
+    const w = weights[key] || 0;
+    const color = val >= 70 ? 'var(--green)' : val >= 50 ? 'var(--accent)' : 'var(--red)';
+    return `<div class="breakdown-item">
+      <div class="breakdown-name">${key}</div>
+      <div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:${val}%;background:${color}"></div></div>
+      <div class="breakdown-score" style="color:${color}">${val}/100</div>
+      <div class="breakdown-weight">${w}%</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-car-name">${car.make} ${car.model}</div>
+        <div class="detail-car-sub">${car.year || ''} · ${car.engine || ''} · ${fuelLabels[car.fuel]||''} · ${car.seats ? car.seats+' miest' : ''}</div>
+        ${car.notes ? `<div style="font-size:13px;color:var(--text3);margin-top:6px">${car.notes}</div>` : ''}
+      </div>
+      <div class="detail-score-big">
+        <div class="detail-score-number" style="color:${barColor}">${total}</div>
+        <div class="detail-score-label">Celkové skóre</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="breakdown-header">📊 Rozklad skóre</div>
+      ${breakdownHTML}
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-section">
+        <div class="detail-section-header">💰 Financie</div>
+        <div class="detail-rows">
+          <div class="detail-row"><span class="detail-row-label">Kúpna cena</span><span class="detail-row-value">€${car.price?.toLocaleString()}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Hodnota po 5 rokoch</span><span class="detail-row-value">${car.value5y ? '€'+car.value5y.toLocaleString() : '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Leasing / mesiac</span><span class="detail-row-value">${car.leasing ? '€'+car.leasing : 'Hotovosť'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Odpis za 5r</span><span class="detail-row-value">${car.value5y ? '€'+(car.price-car.value5y).toLocaleString() : '—'}</span></div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-header">🔧 Ročné náklady</div>
+        <div class="detail-rows">
+          <div class="detail-row"><span class="detail-row-label">Servis</span><span class="detail-row-value">${car.service ? '€'+car.service : '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Pneumatiky</span><span class="detail-row-value">${car.tyres ? '€'+car.tyres : '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">KFZ poistenie</span><span class="detail-row-value">${car.kfz ? '€'+car.kfz : '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Kasko poistenie</span><span class="detail-row-value">${car.kasko ? '€'+car.kasko : '—'}</span></div>
+          <div class="detail-row" style="background:var(--bg3)"><span class="detail-row-label"><strong>Spolu / rok</strong></span><span class="detail-row-value"><strong>${annualCost ? '€'+annualCost.toLocaleString() : '—'}</strong></span></div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-header">⚙️ Technické</div>
+        <div class="detail-rows">
+          <div class="detail-row"><span class="detail-row-label">Výkon</span><span class="detail-row-value">${car.power ? car.power+' kW ('+(car.power*1.36|0)+' PS)' : '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Spotreba</span><span class="detail-row-value">${car.consumption ? car.consumption+' l/100' : '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Palivo</span><span class="detail-row-value">${fuelLabels[car.fuel]||'—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Záruka</span><span class="detail-row-value">${car.warranty ? car.warranty+' roky' : '—'}</span></div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-header">📐 Rozmery & Priestor</div>
+        <div class="detail-rows">
+          <div class="detail-row"><span class="detail-row-label">Objem kufra</span><span class="detail-row-value">${car.trunk ? car.trunk+' l' : '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Počet miest</span><span class="detail-row-value">${car.seats || '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Rozmery</span><span class="detail-row-value">${car.dimensions || '—'}</span></div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-header">⭐ Subjektívne</div>
+        <div class="detail-rows">
+          <div class="detail-row"><span class="detail-row-label">Pocit z auta</span><span class="detail-row-value">${car.feeling ? car.feeling+'/10' : '—'}</span></div>
+          <div class="detail-row"><span class="detail-row-label">Výbava / tech</span><span class="detail-row-value">${car.equipment ? car.equipment+'/10' : '—'}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-danger" onclick="if(confirm('Odstrániť?')){deleteCar(${car.id});showView('cars',document.querySelector('.tab-btn'))}">🗑 Odstrániť auto</button>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER SUMMARY
+// ═══════════════════════════════════════════════════════
+function renderSummary() {
+  const el = document.getElementById('summaryContent');
+  if (cars.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Najprv pridaj autá</div><div class="empty-sub">Keď pridáš aspoň jedno auto, uvidíš tu zhrnutie</div></div>`;
+    return;
+  }
+
+  const scored = cars.map(car => ({ car, ...scoreCar(car, cars) })).sort((a,b) => b.total - a.total);
+
+  const podiumItems = scored.slice(0, 3);
+  const podiumClasses = ['first', 'second', 'third'];
+  const podiumEmojis = ['🥇', '🥈', '🥉'];
+
+  const podiumHTML = podiumItems.map((item, i) => {
+    const barColor = item.total >= 70 ? 'var(--green)' : item.total >= 50 ? 'var(--accent)' : 'var(--red)';
+    return `<div class="podium-item ${podiumClasses[i]}" onclick="showDetailView(${item.car.id})">
+      <div class="podium-rank">${podiumEmojis[i]}</div>
+      <div class="podium-name">${item.car.make} ${item.car.model}</div>
+      <div class="podium-sub">${item.car.year||''} ${item.car.engine||''}</div>
+      <div class="podium-score" style="color:${barColor}">${item.total}</div>
+    </div>`;
+  }).join('');
+
+  const tableRows = scored.map((item, i) => {
+    const annualCost = (item.car.service||0)+(item.car.tyres||0)+(item.car.kfz||0)+(item.car.kasko||0);
+    const barColor = item.total >= 70 ? 'var(--green)' : item.total >= 50 ? 'var(--accent)' : 'var(--red)';
+    const rankClass = i < 3 ? `rank-${i+1}` : '';
+    return `<div class="summary-table-row" onclick="showDetailView(${item.car.id})">
+      <div class="summary-car-info">
+        <div style="display:flex;align-items:center;gap:8px">
+          ${i < 3 ? `<span class="rank-badge ${rankClass}">${i+1}</span>` : `<span style="width:24px;text-align:center;color:var(--text3);font-size:13px">${i+1}</span>`}
+          <div>
+            <div class="summary-car-name">${item.car.make} ${item.car.model}</div>
+            <div class="summary-car-sub">${item.car.year||''} ${item.car.engine||''}</div>
+          </div>
+        </div>
+      </div>
+      <div class="summary-cell">€${item.car.price?.toLocaleString()||'—'}</div>
+      <div class="summary-cell">${annualCost ? '€'+annualCost.toLocaleString() : '—'}</div>
+      <div class="summary-cell">${item.car.consumption ? item.car.consumption+'l' : '—'}</div>
+      <div class="summary-score-cell">
+        <div class="summary-score-num" style="color:${barColor}">${item.total}</div>
+        <div style="flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden">
+          <div style="height:100%;width:${item.total}%;background:${barColor};border-radius:2px"></div>
+        </div>
+      </div>
+      <div><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showDetailView(${item.car.id})">Detail →</button></div>
+    </div>`;
+  }).join('');
+
+  const winner = scored[0];
+  const aiNote = winner ? `<div class="ai-reason">
+    <strong>💡 Odporúčanie:</strong> Na základe tvojho profilu (rodinné auto — spoľahlivosť, priestor, výbava, výkon) najlepšie vychádza 
+    <strong>${winner.car.make} ${winner.car.model}</strong> so skóre <strong>${winner.total}/100</strong>.
+    ${scored.length > 1 ? `Druhé miesto obsadilo <strong>${scored[1].car.make} ${scored[1].car.model}</strong> (${scored[1].total}/100).` : ''}
+    Klikni na detail auta pre podrobný rozklad skóre.
+  </div>` : '';
+
+  el.innerHTML = `
+    ${aiNote}
+    <div class="summary-podium">${podiumHTML}</div>
+    <div class="summary-table">
+      <div class="summary-table-header">
+        <div>Auto</div>
+        <div>Cena</div>
+        <div>Náklady/rok</div>
+        <div>Spotreba</div>
+        <div>Skóre</div>
+        <div></div>
+      </div>
+      ${tableRows}
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+//  WEIGHTS
+// ═══════════════════════════════════════════════════════
+function renderWeightsPanel() {
+  const grid = document.getElementById('weightsGrid');
+  grid.innerHTML = Object.entries(weights).map(([key, val]) => `
+    <div class="weight-item">
+      <div class="weight-item-header">
+        <span class="weight-item-label">${key}</span>
+        <span class="weight-item-value" id="wval-${key.replace(/\s/g,'_')}">${val}%</span>
+      </div>
+      <input type="range" class="weight-slider" min="0" max="30" value="${val}"
+        oninput="updateWeight('${key}', this.value)" />
+    </div>
+  `).join('');
+  updateWeightsTotal();
+}
+
+function updateWeight(key, val) {
+  weights[key] = parseInt(val);
+  document.getElementById('wval-'+key.replace(/\s/g,'_')).textContent = val+'%';
+  updateWeightsTotal();
+  localStorage.setItem('autoscore_weights', JSON.stringify(weights));
+  renderCarsGrid();
+}
+
+function updateWeightsTotal() {
+  const total = Object.values(weights).reduce((a,b)=>a+b,0);
+  const el = document.getElementById('weightsTotalDisplay');
+  el.textContent = `Súčet váh: ${total}% ${total !== 100 ? '⚠️ (ideálne = 100%)' : '✓'}`;
+  el.style.color = total === 100 ? 'var(--green)' : 'var(--accent)';
+}
+
+function resetWeights() {
+  weights = { ...DEFAULT_WEIGHTS };
+  localStorage.setItem('autoscore_weights', JSON.stringify(weights));
+  renderWeightsPanel();
+  renderCarsGrid();
+  toast('Váhy resetované na odporúčané', 'success');
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  el.textContent = (type === 'success' ? '✓ ' : '✕ ') + msg;
+  el.className = `toast ${type} show`;
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
