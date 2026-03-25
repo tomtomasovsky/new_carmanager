@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoScore v1.3</title>
+<title>AutoScore v1.4</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
+:root{
   --bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--bg4:#22222c;
   --border:#2a2a38;--border2:#353545;
   --text:#e8e8f0;--text2:#9090a8;--text3:#5a5a70;
-  --accent:#f0a500;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;
+  --accent:#f0a500;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;--orange:#f97316;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
@@ -26,11 +26,11 @@ header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24p
 .sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
 
 .nav-tabs{display:flex;gap:4px;padding:16px 24px 0;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;}
-.tab-btn{padding:10px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;white-space:nowrap;}
+.tab-btn{padding:10px 16px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;white-space:nowrap;}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
 .tab-btn:hover:not(.active){color:var(--text);}
 
-main{padding:24px;max-width:1400px;margin:0 auto;}
+main{padding:24px;max-width:1500px;margin:0 auto;}
 .view{display:none;}.view.active{display:block;}
 
 .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;}
@@ -43,7 +43,7 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 .btn-sm{padding:6px 12px;font-size:13px;}.btn:disabled{opacity:0.5;cursor:not-allowed;}
 
 /* CARDS */
-.cars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:20px;}
+.cars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;margin-top:20px;}
 .car-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
 .car-card:hover{border-color:var(--border2);transform:translateY(-2px);}
 .car-card-header{padding:16px;background:var(--bg3);display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer;}
@@ -55,15 +55,18 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 .score-mid{background:rgba(240,165,0,0.15);color:var(--accent);border:2px solid rgba(240,165,0,0.4);}
 .score-low{background:rgba(239,68,68,0.15);color:var(--red);border:2px solid rgba(239,68,68,0.3);}
 .car-card-body{padding:14px 16px;cursor:pointer;}
-.car-mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.car-mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .mini-stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;}
 .mini-stat-value{font-size:14px;font-weight:500;margin-top:1px;}
-.score-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:12px;}
+.score-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:10px;}
 .score-bar-fill{height:100%;border-radius:2px;}
 .car-card-actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);}
 .equip-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
 .equip-tag{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(59,130,246,0.12);color:#60a5fa;border:1px solid rgba(59,130,246,0.2);}
 .equip-tag.awd{background:rgba(168,85,247,0.12);color:#c084fc;border-color:rgba(168,85,247,0.2);}
+
+/* WARNING BADGE */
+.warn-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 7px;border-radius:4px;background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);margin-top:4px;}
 
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.2s;}
@@ -77,14 +80,16 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--bg2);}
 
 /* FORM */
-.form-group{margin-bottom:14px;}
+.form-group{margin-bottom:14px;position:relative;}
 .form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
 .form-input,.form-select{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color 0.2s;appearance:none;}
 .form-input:focus,.form-select:focus{outline:none;border-color:var(--accent);}
+.form-input.warn{border-color:var(--red);}
 .form-input::placeholder{color:var(--text3);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 .form-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+.field-warning{font-size:11px;color:var(--red);margin-top:3px;display:flex;align-items:center;gap:4px;}
 .section-divider{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:18px 0 12px;display:flex;align-items:center;gap:10px;}
 .section-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
@@ -102,18 +107,6 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 .ai-loading{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(240,165,0,0.08);border:1px solid rgba(240,165,0,0.2);border-radius:8px;margin-bottom:16px;font-size:13px;color:var(--accent);}
 .spinner{width:16px;height:16px;border:2px solid rgba(240,165,0,0.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* 5Y COST BOX */
-.cost5y-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:16px;}
-.cost5y-header{padding:10px 16px;background:var(--bg4);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);}
-.cost5y-rows{display:grid;grid-template-columns:1fr 1fr;gap:0;}
-.cost5y-item{padding:10px 16px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
-.cost5y-item:nth-child(even){border-right:none;}
-.cost5y-label{font-size:11px;color:var(--text3);}
-.cost5y-value{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;margin-top:2px;}
-.cost5y-total{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:rgba(240,165,0,0.06);}
-.cost5y-total-label{font-weight:600;font-size:14px;}
-.cost5y-total-value{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);}
 
 /* DETAIL */
 .detail-back{display:inline-flex;align-items:center;gap:8px;color:var(--text2);font-size:14px;cursor:pointer;margin-bottom:20px;transition:color 0.2s;}
@@ -133,7 +126,17 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 .detail-row-value{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;text-align:right;}
 .detail-highlight{background:rgba(240,165,0,0.05);}
 
-/* BIG 5Y SUMMARY */
+/* AI EVAL */
+.eval-item{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);}
+.eval-item:last-child{border-bottom:none;}
+.eval-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.eval-dot.good{background:var(--green);}
+.eval-dot.ok{background:var(--accent);}
+.eval-dot.bad{background:var(--red);}
+.eval-text{font-size:13px;line-height:1.5;}
+.eval-text strong{color:var(--text);}
+
+/* 5Y COST */
 .cost5y-big{background:var(--bg2);border:1px solid var(--accent);border-radius:12px;padding:20px;margin-bottom:20px;}
 .cost5y-big-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:16px;color:var(--accent);}
 .cost5y-big-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:16px;}
@@ -165,27 +168,40 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 .podium-sub{font-size:11px;color:var(--text2);}
 .podium-score{font-family:'Bebas Neue',sans-serif;font-size:32px;margin-top:8px;}
 .podium-item.first .podium-score{font-size:40px;color:var(--accent);}
-.summary-table{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
-.sth{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px;padding:10px 16px;background:var(--bg3);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);gap:8px;}
-.str{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;gap:8px;cursor:pointer;transition:background 0.15s;}
-.str:last-child{border-bottom:none;}.str:hover{background:var(--bg3);}
-.summary-car-name{font-weight:600;font-size:14px;}.summary-car-sub{font-size:12px;color:var(--text2);}
-.summary-cell{font-family:'DM Mono',monospace;font-size:13px;}
-.summary-score-num{font-family:'Bebas Neue',sans-serif;font-size:22px;}
-.rank-badge{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
-.rank-1{background:rgba(240,165,0,0.2);color:var(--accent);}
-.rank-2{background:rgba(148,163,184,0.2);color:#94a3b8;}
-.rank-3{background:rgba(180,120,60,0.2);color:#b4783c;}
 
-/* WEIGHTS */
-.weights-panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;}
-.weights-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:4px;}
-.weights-sub{font-size:12px;color:var(--text2);margin-bottom:16px;}
-.weights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
-.weight-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.weight-item-label{font-size:13px;}.weight-item-value{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);}
-.weight-slider{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--bg4);outline:none;}
-.weight-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;}
+/* COMPARE TABLE */
+.compare-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+.compare-table{width:100%;border-collapse:collapse;background:var(--bg2);}
+.compare-table th{background:var(--bg3);padding:10px 14px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;text-align:left;}
+.compare-table th.car-col{text-align:center;min-width:140px;}
+.compare-table td{padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table tr:hover td{background:var(--bg3);}
+.compare-table td.param-name{color:var(--text2);font-size:12px;white-space:nowrap;font-weight:500;}
+.compare-table td.car-val{text-align:center;font-family:'DM Mono',monospace;}
+.compare-table td.best{color:var(--green);font-weight:600;}
+.compare-table td.worst{color:var(--red);}
+.compare-table .section-row td{background:var(--bg4);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:6px 14px;}
+
+/* SVG VISUALIZATION */
+.viz-container{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;overflow-x:auto;}
+.viz-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;margin-bottom:16px;}
+.viz-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;}
+.viz-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+.viz-legend-dot{width:12px;height:8px;border-radius:2px;}
+
+/* COST CHART */
+.chart-container{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;}
+.chart-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;margin-bottom:16px;}
+.bar-chart{display:flex;gap:20px;align-items:flex-end;min-height:200px;padding:0 10px;}
+.bar-group{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+.bar-stack{display:flex;flex-direction:column;align-items:stretch;width:100%;max-width:80px;border-radius:6px 6px 0 0;overflow:hidden;}
+.bar-seg{transition:height 0.5s ease;}
+.bar-label{font-size:11px;color:var(--text2);text-align:center;font-weight:500;}
+.bar-total{font-family:'DM Mono',monospace;font-size:12px;color:var(--text);font-weight:600;}
+.chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;}
+.chart-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);}
+.chart-legend-dot{width:12px;height:12px;border-radius:3px;}
 
 /* SETTINGS */
 .settings-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
@@ -196,14 +212,11 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 .api-key-input{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;flex:1;min-width:200px;}
 .api-key-input:focus{outline:none;border-color:var(--accent);}
 .key-saved{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:6px;font-size:12px;color:var(--green);font-family:'DM Mono',monospace;}
-
-/* STEP GUIDE */
-.step-guide{counter-reset:step;}
 .step{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
 .step-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#000;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
 .step-text{font-size:13px;color:var(--text2);line-height:1.6;}
 .step-text strong{color:var(--text);}
-.step-text code{font-family:'DM Mono',monospace;font-size:11px;background:var(--bg4);padding:1px 5px;border-radius:3px;color:var(--accent);}
+.step-text a{color:var(--accent);}
 
 .ai-reason{background:rgba(240,165,0,0.06);border:1px solid rgba(240,165,0,0.2);border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:14px;line-height:1.6;color:var(--text2);}
 .ai-reason strong{color:var(--accent);}
@@ -220,19 +233,28 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 .toast.show{transform:translateY(0);opacity:1;}
 .toast.success{border-color:rgba(34,197,94,0.4);}
 .toast.error{border-color:rgba(239,68,68,0.4);}
-.page-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:8px;}
+.page-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:16px;}
 .page-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:4px;}
 .page-sub{font-size:13px;color:var(--text2);}
+
+/* 5Y BOX in modal */
+.cost5y-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:16px;}
+.cost5y-header{padding:10px 16px;background:var(--bg4);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);}
+.cost5y-rows{display:grid;grid-template-columns:1fr 1fr;}
+.cost5y-item{padding:10px 16px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
+.cost5y-item:nth-child(even){border-right:none;}
+.cost5y-label{font-size:11px;color:var(--text3);}
+.cost5y-value{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;margin-top:2px;}
+.cost5y-total{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:rgba(240,165,0,0.06);}
+.cost5y-total-label{font-weight:600;font-size:14px;}
+.cost5y-total-value{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);}
 
 @media(max-width:640px){
   main{padding:16px;}
   .form-row,.form-row-3{grid-template-columns:1fr;}
-  .sth,.str{grid-template-columns:2fr 1fr 100px;}
-  .sth>*:nth-child(n+3):not(:last-child),.str>*:nth-child(n+3):not(:last-child){display:none;}
   .detail-car-name{font-size:28px;}
   .checkbox-grid{grid-template-columns:1fr 1fr;}
-  .cost5y-rows{grid-template-columns:1fr;}
-  .cost5y-item{border-right:none;}
+  .bar-chart{gap:8px;}
 }
 </style>
 </head>
@@ -241,7 +263,7 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 <header>
   <div style="display:flex;align-items:center">
     <span class="logo">Auto<span>Score</span></span>
-    <span class="version-badge">v1.3</span>
+    <span class="version-badge">v1.4</span>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
     <div class="sync-indicator" id="syncIndicator"><div class="sync-dot"></div><span id="syncText">Lokálne</span></div>
@@ -251,7 +273,10 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
 
 <div class="nav-tabs">
   <button class="tab-btn active" onclick="showView('cars',this)">🚗 Autá</button>
-  <button class="tab-btn" onclick="showView('summary',this)">📊 Zhrnutie</button>
+  <button class="tab-btn" onclick="showView('compare',this)">⚖️ Porovnanie</button>
+  <button class="tab-btn" onclick="showView('visual',this)">📐 Rozmery</button>
+  <button class="tab-btn" onclick="showView('costs',this)">💰 Náklady</button>
+  <button class="tab-btn" onclick="showView('summary',this)">🏆 Zhrnutie</button>
   <button class="tab-btn" onclick="showView('weights',this)">⚖️ Váhy</button>
   <button class="tab-btn" onclick="showView('settings',this)">⚙️ Nastavenia</button>
 </div>
@@ -261,14 +286,34 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
   <div class="view active" id="view-cars">
     <div class="page-header">
       <div><div class="page-title">Moje autá</div><div class="page-sub" id="carCount">Zatiaľ žiadne autá</div></div>
-      <button class="btn btn-green btn-sm" onclick="syncNow()" id="btnSync" style="display:none">☁️ Sync</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-green btn-sm" onclick="syncNow()" id="btnSync" style="display:none">☁️ Sync</button>
+      </div>
     </div>
     <div class="cars-grid" id="carsGrid"></div>
   </div>
 
+  <!-- COMPARE -->
+  <div class="view" id="view-compare">
+    <div class="page-header"><div><div class="page-title">Porovnávacia tabuľka</div><div class="page-sub">Všetky autá vedľa seba · zelená = najlepšie · červená = najhoršie</div></div></div>
+    <div id="compareContent"></div>
+  </div>
+
+  <!-- VISUAL SIZE -->
+  <div class="view" id="view-visual">
+    <div class="page-header"><div><div class="page-title">Vizualizácia rozmerov</div><div class="page-sub">Schematické autá nakreslené v rovnakom meradle</div></div></div>
+    <div id="visualContent"></div>
+  </div>
+
+  <!-- COSTS -->
+  <div class="view" id="view-costs">
+    <div class="page-header"><div><div class="page-title">Porovnanie nákladov 5 rokov</div><div class="page-sub">Stĺpcový graf · rozklad podľa kategórie</div></div></div>
+    <div id="costsContent"></div>
+  </div>
+
   <!-- SUMMARY -->
   <div class="view" id="view-summary">
-    <div class="page-header"><div><div class="page-title">Zhrnutie & Odporúčanie</div><div class="page-sub">Porovnanie podľa profilu · náklady za 5 rokov</div></div></div>
+    <div class="page-header"><div><div class="page-title">Zhrnutie & Odporúčanie</div><div class="page-sub">Celkové poradie podľa skóre</div></div></div>
     <div id="summaryContent"></div>
   </div>
 
@@ -278,10 +323,10 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
       <div><div class="page-title">Váhy parametrov</div><div class="page-sub">Nastav dôležitosť každého parametra</div></div>
       <button class="btn btn-secondary" onclick="resetWeights()">↺ Reset</button>
     </div>
-    <div class="weights-panel">
-      <div class="weights-title">Tvoj profil: Rodinné auto 🏠</div>
-      <div class="weights-sub">Váhy pre rodinné auto — spoľahlivosť, priestor, výbava, výkon, celkové náklady.</div>
-      <div class="weights-grid" id="weightsGrid"></div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:4px;">Tvoj profil: Rodinné auto 🏠</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:16px;">Váhy pre rodinné auto — spoľahlivosť, priestor, výbava, výkon, celkové náklady.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;" id="weightsGrid"></div>
     </div>
     <div style="text-align:center;color:var(--text3);font-size:13px;margin-top:12px" id="weightsTotalDisplay"></div>
   </div>
@@ -289,116 +334,81 @@ main{padding:24px;max-width:1400px;margin:0 auto;}
   <!-- SETTINGS -->
   <div class="view" id="view-settings">
     <div class="page-header"><div><div class="page-title">Nastavenia</div><div class="page-sub">API kľúče a Google Sheets sync</div></div></div>
-
-    <!-- GROQ -->
     <div class="settings-card">
       <div class="settings-card-title">🤖 Groq API kľúč</div>
-      <div class="settings-card-sub">Zadarmo · 14 400 req/deň · Model: Llama 3.3 70B<br>Získaj kľúč na <a href="https://console.groq.com" target="_blank">console.groq.com</a> → API Keys → Create API Key</div>
+      <div class="settings-card-sub">Zadarmo · 14 400 req/deň · Llama 3.3 70B<br>Získaj na <a href="https://console.groq.com" target="_blank">console.groq.com</a> → API Keys → Create</div>
       <div class="api-key-row">
-        <input class="api-key-input" type="password" id="groqKeyInput" placeholder="gsk_..." />
+        <input class="api-key-input" type="password" id="groqKeyInput" placeholder="gsk_..."/>
         <button class="btn btn-sm btn-primary" onclick="saveGroqKey()">Uložiť</button>
         <button class="btn btn-sm btn-danger" id="btnClearGroq" onclick="clearGroqKey()" style="display:none">Odstrániť</button>
       </div>
       <div id="groqKeyStatus" style="margin-top:10px"></div>
     </div>
-
-    <!-- GOOGLE SHEETS -->
     <div class="settings-card">
       <div class="settings-card-title">☁️ Google Sheets Sync</div>
-      <div class="settings-card-sub">Dáta sa ukladajú do tvojho Google Sheetu — prístupné z PC aj mobilu v reálnom čase.</div>
-
-      <div class="step-guide">
-        <div class="step"><div class="step-num">1</div><div class="step-text">Otvor <a href="https://sheets.new" target="_blank" style="color:var(--accent)">sheets.new</a> — vytvorí sa nový Google Sheet. Pomenuj ho napr. <strong>AutoScore</strong>.</div></div>
-        <div class="step"><div class="step-num">2</div><div class="step-text">V menu klikni <strong>Rozšírenia → Apps Script</strong>. Otvorí sa editor.</div></div>
-        <div class="step"><div class="step-num">3</div><div class="step-text">Vymaž existujúci kód a vlož kód zo sekcie nižšie. Klikni <strong>Uložiť (💾)</strong>.</div></div>
-        <div class="step"><div class="step-num">4</div><div class="step-text">Klikni <strong>Nasadiť → Nové nasadenie</strong>. Typ: <strong>Webová aplikácia</strong>. Spúšťať ako: <strong>Ja</strong>. Prístup: <strong>Ktokoľvek</strong>. Klikni <strong>Nasadiť</strong>.</div></div>
-        <div class="step"><div class="step-num">5</div><div class="step-text">Skopíruj <strong>URL webovej aplikácie</strong> a vlož ju sem:</div></div>
-      </div>
-
+      <div class="settings-card-sub">Dáta dostupné z PC aj mobilu.</div>
+      <div class="step"><div class="step-num">1</div><div class="step-text">Otvor <a href="https://sheets.new" target="_blank">sheets.new</a> — nový Google Sheet.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Rozšírenia → Apps Script</strong> — otvorí editor.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Vymaž kód, vlož kód nižšie, ulož.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Nasadiť → Nové nasadenie</strong> · Typ: Webová aplikácia · Prístup: Ktokoľvek.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">Skopíruj URL a vlož sem:</div></div>
       <div class="api-key-row" style="margin-top:8px">
-        <input class="api-key-input" type="text" id="sheetsUrlInput" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:11px" />
-        <button class="btn btn-sm btn-primary" onclick="saveSheetsUrl()">Uložiť URL</button>
+        <input class="api-key-input" type="text" id="sheetsUrlInput" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:11px"/>
+        <button class="btn btn-sm btn-primary" onclick="saveSheetsUrl()">Uložiť</button>
         <button class="btn btn-sm btn-danger" id="btnClearSheets" onclick="clearSheetsUrl()" style="display:none">Odstrániť</button>
       </div>
       <div id="sheetsUrlStatus" style="margin-top:10px"></div>
-
-      <div style="margin-top:16px">
-        <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Apps Script kód (skopíruj):</div>
+      <div style="margin-top:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Apps Script kód:</div>
         <div style="position:relative">
-          <pre id="appsScriptCode" style="background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);overflow-x:auto;line-height:1.6;max-height:220px;overflow-y:auto">const SHEET_NAME = 'Cars';
-
-function doGet(e) {
-  return handleRequest(e);
-}
-
-function doPost(e) {
-  return handleRequest(e);
-}
-
-function handleRequest(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName(SHEET_NAME);
-  if (!sheet) sheet = ss.insertSheet(SHEET_NAME);
-
-  const action = (e.parameter && e.parameter.action) || (e.postData && JSON.parse(e.postData.contents).action);
-  const cors = ContentService.createTextOutput;
-
-  if (action === 'read') {
-    const data = sheet.getDataRange().getValues();
-    const headers = data[0] || [];
-    const rows = data.slice(1).map(row => {
-      const obj = {};
-      headers.forEach((h, i) => { try { obj[h] = JSON.parse(row[i]); } catch { obj[h] = row[i]; } });
+          <pre id="appsScriptCode" style="background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);overflow-x:auto;line-height:1.6;max-height:200px;overflow-y:auto">const SHEET_NAME = 'Cars';
+function doGet(e){return handleRequest(e);}
+function doPost(e){return handleRequest(e);}
+function handleRequest(e){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  let sheet=ss.getSheetByName(SHEET_NAME);
+  if(!sheet)sheet=ss.insertSheet(SHEET_NAME);
+  const action=(e.parameter&&e.parameter.action)||(e.postData&&JSON.parse(e.postData.contents).action);
+  if(action==='read'){
+    const data=sheet.getDataRange().getValues();
+    const headers=data[0]||[];
+    const rows=data.slice(1).map(row=>{
+      const obj={};
+      headers.forEach((h,i)=>{try{obj[h]=JSON.parse(row[i]);}catch{obj[h]=row[i];}});
       return obj;
-    }).filter(r => r.id);
+    }).filter(r=>r.id);
     return ContentService.createTextOutput(JSON.stringify({ok:true,cars:rows})).setMimeType(ContentService.MimeType.JSON);
   }
-
-  if (action === 'write') {
-    const body = JSON.parse(e.postData.contents);
-    const cars = body.cars || [];
+  if(action==='write'){
+    const body=JSON.parse(e.postData.contents);
+    const cars=body.cars||[];
     sheet.clearContents();
-    if (cars.length === 0) return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
-    const keys = Object.keys(cars[0]);
+    if(cars.length===0)return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+    const keys=Object.keys(cars[0]);
     sheet.appendRow(keys);
-    cars.forEach(car => sheet.appendRow(keys.map(k => typeof car[k] === 'object' ? JSON.stringify(car[k]) : car[k])));
+    cars.forEach(car=>sheet.appendRow(keys.map(k=>typeof car[k]==='object'?JSON.stringify(car[k]):car[k])));
     return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
   }
-
-  return ContentService.createTextOutput(JSON.stringify({ok:false,error:'Unknown action'})).setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify({ok:false,error:'Unknown'})).setMimeType(ContentService.MimeType.JSON);
 }</pre>
-          <button class="btn btn-sm btn-secondary" style="position:absolute;top:8px;right:8px" onclick="copyAppsScript()">📋 Kopírovať</button>
+          <button class="btn btn-sm btn-secondary" style="position:absolute;top:8px;right:8px" onclick="copyScript()">📋 Kopírovať</button>
         </div>
       </div>
-
-      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-green btn-sm" onclick="syncNow()">☁️ Synchronizovať teraz</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn btn-green btn-sm" onclick="syncNow()">☁️ Sync teraz</button>
         <button class="btn btn-secondary btn-sm" onclick="loadFromSheets()">⬇️ Načítať zo Sheets</button>
       </div>
     </div>
-
-    <!-- INFO -->
-    <div class="settings-card">
-      <div class="settings-card-title">ℹ️ O aplikácii</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.9">
-        <div>Verzia: <strong style="color:var(--text)">1.3</strong></div>
-        <div>AI model: <strong style="color:var(--text)">Llama 3.3 70B via Groq</strong></div>
-        <div>Trh: <strong style="color:var(--text)">Rakúsko (AT) · EUR €</strong></div>
-        <div>Profil: <strong style="color:var(--text)">Rodinné auto</strong></div>
-        <div>Sync: <strong style="color:var(--text)">Google Sheets (voliteľné)</strong></div>
-      </div>
-    </div>
-
     <div class="settings-card" style="border-color:rgba(239,68,68,0.3)">
       <div class="settings-card-title" style="color:var(--red)">⚠️ Nebezpečná zóna</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Vymaže všetky lokálne dáta a nastavenia.</div>
-      <button class="btn btn-danger" onclick="if(confirm('Naozaj vymazať všetky dáta?')){localStorage.clear();location.reload()}">🗑 Vymazať všetky dáta</button>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Vymaže všetky lokálne dáta.</div>
+      <button class="btn btn-danger" onclick="if(confirm('Naozaj?')){localStorage.clear();location.reload()}">🗑 Vymazať všetky dáta</button>
     </div>
   </div>
 
   <!-- DETAIL -->
   <div class="view" id="view-detail">
-    <div class="detail-back" onclick="showView('cars',document.querySelector('.tab-btn'))">← Späť na autá</div>
+    <div class="detail-back" id="detailBackBtn" onclick="showView('cars',document.querySelector('.tab-btn'))">← Späť</div>
     <div id="detailContent"></div>
   </div>
 </main>
@@ -419,16 +429,15 @@ function handleRequest(e) {
         <div class="form-group"><label class="form-label">Rok</label><input class="form-input" id="inp-year" placeholder="2024" type="number"/></div>
         <div class="form-group"><label class="form-label">Motor / Verzia</label><input class="form-input" id="inp-engine" placeholder="2.0 TDI 150 DSG"/></div>
       </div>
-      <div class="form-group"><label class="form-label">Kúpna cena (€) *</label><input class="form-input" id="inp-price" placeholder="42000" type="number"/></div>
+      <div class="form-group"><label class="form-label">Kúpna cena (€) *</label><input class="form-input" id="inp-price" type="number" placeholder="42000" oninput="validateField(this,'price')"/><div class="field-warning" id="warn-price" style="display:none">⚠️ <span></span></div></div>
 
       <div id="aiLoadingBar" style="display:none"><div class="ai-loading"><div class="spinner"></div><span id="aiLoadingText">Groq AI dopĺňa parametre...</span></div></div>
 
       <div id="aiFieldsSection" style="display:none">
-
         <div class="section-divider">Technické parametre</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Výkon (kW)</label><input class="form-input" id="inp-power" type="number"/></div>
-          <div class="form-group"><label class="form-label">Spotreba (l alebo kWh/100km)</label><input class="form-input" id="inp-consumption" type="number" step="0.1"/></div>
+          <div class="form-group"><label class="form-label">Výkon (kW)</label><input class="form-input" id="inp-power" type="number" oninput="validateField(this,'power')"/><div class="field-warning" id="warn-power" style="display:none">⚠️ <span></span></div></div>
+          <div class="form-group"><label class="form-label">Spotreba (l alebo kWh/100km)</label><input class="form-input" id="inp-consumption" type="number" step="0.1" oninput="validateField(this,'consumption')"/><div class="field-warning" id="warn-consumption" style="display:none">⚠️ <span></span></div></div>
         </div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Typ paliva</label>
@@ -437,19 +446,23 @@ function handleRequest(e) {
               <option value="hybrid">Hybrid</option><option value="electric">Elektro</option>
             </select>
           </div>
-          <div class="form-group"><label class="form-label">Záruka (roky)</label><input class="form-input" id="inp-warranty" type="number"/></div>
+          <div class="form-group"><label class="form-label">Záruka (roky)</label><input class="form-input" id="inp-warranty" type="number" oninput="validateField(this,'warranty')"/><div class="field-warning" id="warn-warranty" style="display:none">⚠️ <span></span></div></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Ročný nájazd (km)</label><input class="form-input" id="inp-mileage" type="number" placeholder="20000"/></div>
-          <div class="form-group"><label class="form-label">Cena paliva (€/l alebo €/kWh)</label><input class="form-input" id="inp-fuel-price" type="number" step="0.01" placeholder="1.65"/></div>
+          <div class="form-group"><label class="form-label">Ročný nájazd (km)</label><input class="form-input" id="inp-mileage" type="number" placeholder="20000" oninput="validateField(this,'mileage');updateCost5yPreview()"/></div>
+          <div class="form-group"><label class="form-label">Cena paliva (€/l alebo €/kWh)</label><input class="form-input" id="inp-fuel-price" type="number" step="0.01" placeholder="1.65" oninput="updateCost5yPreview()"/></div>
         </div>
 
         <div class="section-divider">Rozmery & Priestor</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Objem kufra (l)</label><input class="form-input" id="inp-trunk" type="number"/></div>
+          <div class="form-group"><label class="form-label">Objem kufra (l)</label><input class="form-input" id="inp-trunk" type="number" oninput="validateField(this,'trunk')"/><div class="field-warning" id="warn-trunk" style="display:none">⚠️ <span></span></div></div>
           <div class="form-group"><label class="form-label">Počet miest</label><input class="form-input" id="inp-seats" type="number"/></div>
         </div>
-        <div class="form-group"><label class="form-label">Rozmery (dĺžka × šírka cm)</label><input class="form-input" id="inp-dimensions" placeholder="477x183"/></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Dĺžka (cm)</label><input class="form-input" id="inp-length" type="number" placeholder="470" oninput="validateField(this,'length')"/><div class="field-warning" id="warn-length" style="display:none">⚠️ <span></span></div></div>
+          <div class="form-group"><label class="form-label">Šírka (cm)</label><input class="form-input" id="inp-width" type="number" placeholder="183" oninput="validateField(this,'width')"/></div>
+        </div>
+        <div class="form-group"><label class="form-label">Výška (cm)</label><input class="form-input" id="inp-height" type="number" placeholder="148"/></div>
 
         <div class="section-divider">Pohon & Výbava</div>
         <div style="margin-bottom:10px">
@@ -462,51 +475,48 @@ function handleRequest(e) {
 
         <div class="section-divider">Pneumatiky</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Rozmer letných (napr. 225/45 R18)</label><input class="form-input" id="inp-tyre-summer" placeholder="225/45 R18"/></div>
-          <div class="form-group"><label class="form-label">Rozmer zimných (napr. 215/55 R17)</label><input class="form-input" id="inp-tyre-winter" placeholder="215/55 R17"/></div>
+          <div class="form-group"><label class="form-label">Letné (napr. 225/45 R18)</label><input class="form-input" id="inp-tyre-summer" placeholder="225/45 R18"/></div>
+          <div class="form-group"><label class="form-label">Zimné (napr. 215/55 R17)</label><input class="form-input" id="inp-tyre-winter" placeholder="215/55 R17"/></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Cena sady letných €</label><input class="form-input" id="inp-tyre-summer-price" type="number" placeholder="AI dopočíta"/></div>
-          <div class="form-group"><label class="form-label">Cena sady zimných €</label><input class="form-input" id="inp-tyre-winter-price" type="number" placeholder="AI dopočíta"/></div>
+          <div class="form-group"><label class="form-label">Cena sady letných (€)</label><input class="form-input" id="inp-tyre-summer-price" type="number" oninput="updateCost5yPreview()"/></div>
+          <div class="form-group"><label class="form-label">Cena sady zimných (€)</label><input class="form-input" id="inp-tyre-winter-price" type="number" oninput="updateCost5yPreview()"/></div>
         </div>
-        <div style="font-size:12px;color:var(--text3);margin-top:-4px;margin-bottom:8px">Výdrž pneumatík: 40 000 km. AI dopočíta ročné náklady podľa nájazdu.</div>
 
         <div class="section-divider">Leasing</div>
         <div class="form-row-3">
-          <div class="form-group"><label class="form-label">Prvá splátka (€)</label><input class="form-input" id="inp-leasing-first" type="number" placeholder="4000"/></div>
-          <div class="form-group"><label class="form-label">Mesačná splátka (€)</label><input class="form-input" id="inp-leasing-monthly" type="number" placeholder="450"/></div>
-          <div class="form-group"><label class="form-label">Posledná splátka (€)</label><input class="form-input" id="inp-leasing-last" type="number" placeholder="8000"/></div>
+          <div class="form-group"><label class="form-label">Prvá splátka (€)</label><input class="form-input" id="inp-leasing-first" type="number" oninput="updateCost5yPreview()"/></div>
+          <div class="form-group"><label class="form-label">Mesačná splátka (€)</label><input class="form-input" id="inp-leasing-monthly" type="number" oninput="updateCost5yPreview()"/></div>
+          <div class="form-group"><label class="form-label">Posledná splátka (€)</label><input class="form-input" id="inp-leasing-last" type="number" oninput="updateCost5yPreview()"/></div>
         </div>
-        <div class="form-hint" style="margin-top:-8px">Nechaj prázdne ak kupuješ za hotové</div>
 
         <div class="section-divider">Poistenie & Servis</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">KFZ poistenie (€/mesiac)</label><input class="form-input" id="inp-kfz" type="number" placeholder="35"/></div>
-          <div class="form-group"><label class="form-label">Kasko poistenie (€/mesiac)</label><input class="form-input" id="inp-kasko" type="number" placeholder="55"/></div>
+          <div class="form-group"><label class="form-label">KFZ (€/mesiac)</label><input class="form-input" id="inp-kfz" type="number" oninput="validateField(this,'kfz');updateCost5yPreview()"/><div class="field-warning" id="warn-kfz" style="display:none">⚠️ <span></span></div></div>
+          <div class="form-group"><label class="form-label">Kasko (€/mesiac)</label><input class="form-input" id="inp-kasko" type="number" oninput="validateField(this,'kasko');updateCost5yPreview()"/><div class="field-warning" id="warn-kasko" style="display:none">⚠️ <span></span></div></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Servisné náklady (€/rok)</label><input class="form-input" id="inp-service" type="number" placeholder="600"/></div>
-          <div class="form-group"><label class="form-label">Hodnota po 5 rokoch (€)</label><input class="form-input" id="inp-value5y" type="number"/></div>
+          <div class="form-group"><label class="form-label">Servis (€/rok)</label><input class="form-input" id="inp-service" type="number" oninput="validateField(this,'service');updateCost5yPreview()"/><div class="field-warning" id="warn-service" style="display:none">⚠️ <span></span></div></div>
+          <div class="form-group"><label class="form-label">Hodnota po 5 rokoch (€)</label><input class="form-input" id="inp-value5y" type="number" oninput="updateCost5yPreview()"/></div>
         </div>
 
         <div class="section-divider">Subjektívne</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Pocit z auta (1–10)</label><input class="form-input" id="inp-feeling" type="number" min="1" max="10" placeholder="8"/></div>
-          <div class="form-group"><label class="form-label">Výbava / tech (1–10)</label><input class="form-input" id="inp-equipment" type="number" min="1" max="10"/></div>
+          <div class="form-group"><label class="form-label">Pocit z auta (1–10)</label><input class="form-input" id="inp-feeling" type="number" min="1" max="10" placeholder="8" oninput="validateField(this,'feeling')"/><div class="field-warning" id="warn-feeling" style="display:none">⚠️ <span></span></div></div>
+          <div class="form-group"><label class="form-label">Výbava / tech (1–10)</label><input class="form-input" id="inp-equipment" type="number" min="1" max="10" oninput="validateField(this,'equipment')"/><div class="field-warning" id="warn-equipment" style="display:none">⚠️ <span></span></div></div>
         </div>
-        <div class="form-group"><label class="form-label">Poznámky</label><input class="form-input" id="inp-notes" placeholder="farba, výbavy, zdroj ceny..."/></div>
+        <div class="form-group"><label class="form-label">Poznámky</label><input class="form-input" id="inp-notes" placeholder="farba, špeciálne výbavy, zdroj ceny..."/></div>
 
-        <!-- 5Y PREVIEW -->
         <div id="cost5yPreview" style="display:none">
-          <div class="section-divider">Náhľad: Celkové náklady za 5 rokov</div>
+          <div class="section-divider">Náhľad nákladov za 5 rokov</div>
           <div class="cost5y-box">
             <div class="cost5y-header">Kalkulácia · 5 rokov</div>
             <div class="cost5y-rows" id="cost5yRows"></div>
             <div class="cost5y-total"><span class="cost5y-total-label">Celkové náklady 5r</span><span class="cost5y-total-value" id="cost5yTotalVal">—</span></div>
           </div>
         </div>
-
       </div>
+
       <div id="manualToggleSection">
         <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="showManualFields()">Vyplniť manuálne (bez AI)</button>
       </div>
@@ -522,11 +532,85 @@ function handleRequest(e) {
 <div class="toast" id="toast"></div>
 
 <script>
+// ═══ CONSTANTS ═══
+const CAR_COLORS=['#f0a500','#3b82f6','#22c55e','#a855f7','#ef4444','#f97316'];
+const COST_COLORS={fuel:'#f0a500',tyres:'#3b82f6',insurance:'#a855f7',service:'#22c55e',depreciation:'#ef4444',leasing:'#f97316'};
+const FL={diesel:'Diesel',petrol:'Benzín',hybrid:'Hybrid',electric:'Elektro'};
+
+// ABSOLUTE BENCHMARKS — realistic AT market values
+const BENCHMARKS={
+  consumption:{
+    diesel:{min:3.5,max:10,warn_high:15,warn_low:3,label:'l/100km (diesel)'},
+    petrol:{min:4,max:12,warn_high:18,warn_low:3.5,label:'l/100km (benzín)'},
+    hybrid:{min:2,max:7,warn_high:12,warn_low:1,label:'l/100km (hybrid)'},
+    electric:{min:12,max:25,warn_high:35,warn_low:8,label:'kWh/100km'},
+  },
+  price:{min:15000,max:100000,warn_high:150000,warn_low:5000},
+  power:{min:50,max:350,warn_high:500,warn_low:40},
+  trunk:{min:200,max:700,warn_high:900,warn_low:100},
+  warranty:{min:1,max:7,warn_high:10,warn_low:0},
+  service:{min:200,max:2000,warn_high:5000,warn_low:50},
+  kfz:{min:10,max:150,warn_high:300,warn_low:5},
+  kasko:{min:20,max:250,warn_high:500,warn_low:10},
+  mileage:{min:5000,max:50000,warn_high:100000,warn_low:1000},
+  feeling:{min:1,max:10,warn_high:11,warn_low:0},
+  equipment:{min:1,max:10,warn_high:11,warn_low:0},
+  length:{min:350,max:550,warn_high:650,warn_low:250},
+};
+
+// Score a value absolutely (0-100) based on benchmarks
+function absoluteScore(val, field, fuel='petrol'){
+  if(!val||val<=0) return null;
+  const B = field==='consumption' ? (BENCHMARKS.consumption[fuel]||BENCHMARKS.consumption.petrol) : BENCHMARKS[field];
+  if(!B) return null;
+  const clamp=(v,mn,mx)=>Math.max(mn,Math.min(mx,v));
+  // Invert for "lower is better" fields
+  const invertFields=['consumption','price','service','kfz','kasko'];
+  if(invertFields.includes(field)){
+    if(val<=B.min) return 100;
+    if(val>=B.max) return 0;
+    return Math.round((1-(val-B.min)/(B.max-B.min))*100);
+  } else {
+    if(val>=B.max) return 100;
+    if(val<=B.min) return 0;
+    return Math.round(((val-B.min)/(B.max-B.min))*100);
+  }
+}
+
+// Validate field and show warning
+const WARN_RULES={
+  consumption:{check:(v,fuel)=>{const b=BENCHMARKS.consumption[fuel]||BENCHMARKS.consumption.petrol;return v>b.warn_high?`Nezvyčajne vysoká spotreba! (reálne ${b.min}–${b.max}l)`:v<b.warn_low?`Príliš nízka hodnota`:null;},},
+  price:{check:(v)=>v>150000?'Veľmi vysoká cena — skontroluj':v<3000?'Príliš nízka cena':null},
+  power:{check:(v)=>v>500?'Výkon >500kW? Skontroluj hodnotu':v<30?'Veľmi nízky výkon':null},
+  trunk:{check:(v)=>v>900?'Objem kufra >900l? Skontroluj':v<100?'Veľmi malý kufor':null},
+  warranty:{check:(v)=>v>15?'Záruka >15 rokov? Skontroluj':null},
+  service:{check:(v)=>v>5000?'Ročný servis >€5000? Skontroluj':v<50?'Príliš nízka hodnota':null},
+  kfz:{check:(v)=>v>300?'KFZ >€300/mes? Skontroluj':v<5?'KFZ <€5/mes? Skontroluj':null},
+  kasko:{check:(v)=>v>500?'Kasko >€500/mes? Skontroluj':v<10?'Kasko <€10/mes? Skontroluj':null},
+  mileage:{check:(v)=>v>100000?'Nájazd >100 000km/rok? Skontroluj':null},
+  feeling:{check:(v)=>v>10||v<1?'Hodnota musí byť 1–10':null},
+  equipment:{check:(v)=>v>10||v<1?'Hodnota musí byť 1–10':null},
+  length:{check:(v)=>v>650?'Dĺžka >650cm? Skontroluj':v<250?'Dĺžka <250cm? Skontroluj':null},
+};
+
+function validateField(input, field){
+  const v=parseFloat(input.value);
+  const warnEl=document.getElementById('warn-'+field);
+  if(!warnEl)return;
+  if(!v||isNaN(v)){warnEl.style.display='none';input.classList.remove('warn');return;}
+  const fuel=document.getElementById('inp-fuel')?.value||'petrol';
+  const rule=WARN_RULES[field];
+  if(!rule){warnEl.style.display='none';return;}
+  const msg=field==='consumption'?rule.check(v,fuel):rule.check(v);
+  if(msg){warnEl.style.display='flex';warnEl.querySelector('span').textContent=msg;input.classList.add('warn');}
+  else{warnEl.style.display='none';input.classList.remove('warn');}
+}
+
 // ═══ STATE ═══
-let cars = JSON.parse(localStorage.getItem('autoscore_cars')||'[]');
-let groqKey = localStorage.getItem('autoscore_groq_key')||'';
-let sheetsUrl = localStorage.getItem('autoscore_sheets_url')||'';
-let editingId = null;
+let cars=JSON.parse(localStorage.getItem('autoscore_cars')||'[]');
+let groqKey=localStorage.getItem('autoscore_groq_key')||'';
+let sheetsUrl=localStorage.getItem('autoscore_sheets_url')||'';
+let editingId=null;
 
 const EQUIPMENT=[
   {id:'hud',label:'🪟 HUD displej'},{id:'vent_seats',label:'💨 Ventilované sedadlá'},
@@ -546,214 +630,169 @@ const DEFAULT_WEIGHTS={
 };
 let weights=JSON.parse(localStorage.getItem('autoscore_weights')||JSON.stringify(DEFAULT_WEIGHTS));
 
-const FL={diesel:'Diesel',petrol:'Benzín',hybrid:'Hybrid',electric:'Elektro'};
-
 // ═══ INIT ═══
 window.onload=()=>{
   buildEquipGrid();
   renderWeightsPanel();
   renderCarsGrid();
-  renderSummary();
   renderSettingsStatus();
   if(sheetsUrl){setSyncStatus('synced','Sheets aktívne');document.getElementById('btnSync').style.display='inline-flex';}
 };
 
-// ═══ EQUIPMENT ═══
 function buildEquipGrid(){
   document.getElementById('equipGrid').innerHTML=EQUIPMENT.map(e=>`
     <label class="checkbox-item" id="chklabel-${e.id}" onclick="toggleCb('${e.id}')">
       <input type="checkbox" id="chk-${e.id}"><span class="check-box" id="chkbox-${e.id}">✓</span><span>${e.label}</span>
     </label>`).join('');
 }
-function toggleCb(id){
-  const cb=document.getElementById('chk-'+id),box=document.getElementById('chkbox-'+id),lbl=document.getElementById('chklabel-'+id);
-  if(!cb)return; cb.checked=!cb.checked;
-  lbl.classList.toggle('checked',cb.checked);
-  box.style.color=cb.checked?(id==='awd'?'#fff':'#000'):'transparent';
-}
-function setCb(id,val){
-  const cb=document.getElementById('chk-'+id),box=document.getElementById('chkbox-'+id),lbl=document.getElementById('chklabel-'+id);
-  if(!cb)return; cb.checked=!!val;
-  lbl.classList.toggle('checked',!!val);
-  box.style.color=val?(id==='awd'?'#fff':'#000'):'transparent';
-}
-function getEquip(){
-  const r={awd:document.getElementById('chk-awd')?.checked||false};
-  EQUIPMENT.forEach(e=>r[e.id]=document.getElementById('chk-'+e.id)?.checked||false);
-  return r;
-}
+function toggleCb(id){const cb=document.getElementById('chk-'+id),box=document.getElementById('chkbox-'+id),lbl=document.getElementById('chklabel-'+id);if(!cb)return;cb.checked=!cb.checked;lbl.classList.toggle('checked',cb.checked);box.style.color=cb.checked?(id==='awd'?'#fff':'#000'):'transparent';}
+function setCb(id,val){const cb=document.getElementById('chk-'+id),box=document.getElementById('chkbox-'+id),lbl=document.getElementById('chklabel-'+id);if(!cb)return;cb.checked=!!val;lbl.classList.toggle('checked',!!val);box.style.color=val?(id==='awd'?'#fff':'#000'):'transparent';}
+function getEquip(){const r={awd:document.getElementById('chk-awd')?.checked||false};EQUIPMENT.forEach(e=>r[e.id]=document.getElementById('chk-'+e.id)?.checked||false);return r;}
 function clearEquip(){setCb('awd',false);EQUIPMENT.forEach(e=>setCb(e.id,false));}
 
-// ═══ 5Y COST CALC ═══
+// ═══ 5Y COST ═══
 function calc5y(car){
   const mileage=car.mileage||20000;
   const fuelPrice=car.fuelPrice||1.65;
-  const consumption=car.consumption||0;
-  const tyreSummer=car.tyreSummerPrice||0;
-  const tyreWinter=car.tyreWinterPrice||0;
-  const tyreLifeKm=40000;
-
-  // fuel
-  const fuelPerYear = car.fuel==='electric'
-    ? (consumption/100)*mileage*fuelPrice
-    : (consumption/100)*mileage*fuelPrice;
-  const fuel5y=Math.round(fuelPerYear*5);
-
-  // tyres — we assume 2 sets (summer + winter), each lasts 40k km
-  // sets needed over 5 years = (mileage*5) / 40000
   const totalKm5y=mileage*5;
-  const summerSetsNeeded=Math.max(1,Math.ceil(totalKm5y/tyreLifeKm));
-  const winterSetsNeeded=Math.max(1,Math.ceil(totalKm5y/tyreLifeKm));
-  const tyres5y=Math.round(summerSetsNeeded*tyreSummer+winterSetsNeeded*tyreWinter);
-
-  // insurance (monthly → *60)
+  const setsNeeded=Math.max(1,Math.ceil(totalKm5y/40000));
+  const fuel5y=Math.round((car.consumption||0)/100*mileage*(car.fuelPrice||1.65)*5);
+  const tyres5y=Math.round(setsNeeded*((car.tyreSummerPrice||0)+(car.tyreWinterPrice||0)));
   const ins5y=Math.round(((car.kfz||0)+(car.kasko||0))*60);
-
-  // service
   const service5y=Math.round((car.service||0)*5);
-
-  // depreciation
   const depreciation=car.value5y?Math.round(car.price-car.value5y):null;
-
-  // leasing
-  const leasingTotal=car.leasingFirst||car.leasingMonthly||car.leasingLast
-    ? Math.round((car.leasingFirst||0)+(car.leasingMonthly||0)*60+(car.leasingLast||0))
-    : null;
-
+  const leasingTotal=car.leasingFirst||car.leasingMonthly||car.leasingLast?Math.round((car.leasingFirst||0)+(car.leasingMonthly||0)*60+(car.leasingLast||0)):null;
   const items=[
-    {label:'Palivo 5r',value:fuel5y||null},
-    {label:'Pneumatiky 5r',value:tyres5y||null},
-    {label:'Poistenie 5r',value:ins5y||null},
-    {label:'Servis 5r',value:service5y||null},
-    {label:'Odpis hodnoty',value:depreciation},
-    {label:'Leasing spolu',value:leasingTotal},
+    {label:'Palivo 5r',value:fuel5y||null,key:'fuel'},
+    {label:'Pneumatiky 5r',value:tyres5y||null,key:'tyres'},
+    {label:'Poistenie 5r',value:ins5y||null,key:'insurance'},
+    {label:'Servis 5r',value:service5y||null,key:'service'},
+    {label:'Odpis hodnoty',value:depreciation,key:'depreciation'},
+    {label:'Leasing spolu',value:leasingTotal,key:'leasing'},
   ];
-
   const total=items.reduce((s,i)=>s+(i.value||0),0);
   return{items,total,fuel5y,tyres5y,ins5y,service5y,depreciation,leasingTotal};
 }
 
 function updateCost5yPreview(){
   const price=parseFloat(document.getElementById('inp-price').value)||0;
-  const mileage=parseFloat(document.getElementById('inp-mileage').value)||20000;
-  const fuelPrice=parseFloat(document.getElementById('inp-fuel-price').value)||1.65;
-  const consumption=parseFloat(document.getElementById('inp-consumption').value)||0;
-  const tyreSummer=parseFloat(document.getElementById('inp-tyre-summer-price').value)||0;
-  const tyreWinter=parseFloat(document.getElementById('inp-tyre-winter-price').value)||0;
-  const kfz=parseFloat(document.getElementById('inp-kfz').value)||0;
-  const kasko=parseFloat(document.getElementById('inp-kasko').value)||0;
-  const service=parseFloat(document.getElementById('inp-service').value)||0;
-  const value5y=parseFloat(document.getElementById('inp-value5y').value)||0;
-  const lFirst=parseFloat(document.getElementById('inp-leasing-first').value)||0;
-  const lMonthly=parseFloat(document.getElementById('inp-leasing-monthly').value)||0;
-  const lLast=parseFloat(document.getElementById('inp-leasing-last').value)||0;
-  const fuel=document.getElementById('inp-fuel').value;
-
-  const car={price,mileage,fuelPrice,consumption,tyreSummerPrice:tyreSummer,tyreWinterPrice:tyreWinter,kfz,kasko,service,value5y,leasingFirst:lFirst,leasingMonthly:lMonthly,leasingLast:lLast,fuel};
-  const {items,total}=calc5y(car);
-
-  if(!price&&!consumption&&!service) return;
+  if(!price)return;
+  const car={
+    price,mileage:parseFloat(document.getElementById('inp-mileage').value)||20000,
+    fuelPrice:parseFloat(document.getElementById('inp-fuel-price').value)||1.65,
+    consumption:parseFloat(document.getElementById('inp-consumption').value)||0,
+    tyreSummerPrice:parseFloat(document.getElementById('inp-tyre-summer-price').value)||0,
+    tyreWinterPrice:parseFloat(document.getElementById('inp-tyre-winter-price').value)||0,
+    kfz:parseFloat(document.getElementById('inp-kfz').value)||0,
+    kasko:parseFloat(document.getElementById('inp-kasko').value)||0,
+    service:parseFloat(document.getElementById('inp-service').value)||0,
+    value5y:parseFloat(document.getElementById('inp-value5y').value)||0,
+    leasingFirst:parseFloat(document.getElementById('inp-leasing-first').value)||0,
+    leasingMonthly:parseFloat(document.getElementById('inp-leasing-monthly').value)||0,
+    leasingLast:parseFloat(document.getElementById('inp-leasing-last').value)||0,
+    fuel:document.getElementById('inp-fuel').value,
+  };
+  const{items,total}=calc5y(car);
   document.getElementById('cost5yPreview').style.display='block';
   document.getElementById('cost5yRows').innerHTML=items.map(i=>`
-    <div class="cost5y-item">
-      <div class="cost5y-label">${i.label}</div>
-      <div class="cost5y-value">${i.value!=null&&i.value>0?'€'+i.value.toLocaleString():'—'}</div>
-    </div>`).join('');
+    <div class="cost5y-item"><div class="cost5y-label">${i.label}</div><div class="cost5y-value">${i.value&&i.value>0?'€'+i.value.toLocaleString():'—'}</div></div>`).join('');
   document.getElementById('cost5yTotalVal').textContent=total>0?'€'+total.toLocaleString():'—';
 }
 
-// Auto-update preview on input change
-document.addEventListener('input',e=>{
-  const ids=['inp-price','inp-mileage','inp-fuel-price','inp-consumption','inp-tyre-summer-price','inp-tyre-winter-price','inp-kfz','inp-kasko','inp-service','inp-value5y','inp-leasing-first','inp-leasing-monthly','inp-leasing-last'];
-  if(ids.includes(e.target?.id)) updateCost5yPreview();
-});
+// ═══ SCORING ═══
+function scoreCar(car,all){
+  const clamp=v=>Math.max(0,Math.min(100,v));
+  const s={};
 
-// ═══ SETTINGS / API KEYS ═══
-function saveGroqKey(){
-  const v=document.getElementById('groqKeyInput').value.trim();
-  if(!v)return showToast('Zadaj API kľúč','error');
-  if(!v.startsWith('gsk_'))return showToast('Groq kľúč musí začínať gsk_...','error');
-  groqKey=v; localStorage.setItem('autoscore_groq_key',groqKey);
-  renderSettingsStatus(); showToast('Groq kľúč uložený ✓','success');
-}
-function clearGroqKey(){groqKey='';localStorage.removeItem('autoscore_groq_key');document.getElementById('groqKeyInput').value='';renderSettingsStatus();showToast('Groq kľúč odstránený','success');}
-function saveSheetsUrl(){
-  const v=document.getElementById('sheetsUrlInput').value.trim();
-  if(!v||!v.startsWith('https://script.google.com'))return showToast('Vlož platnú Apps Script URL','error');
-  sheetsUrl=v; localStorage.setItem('autoscore_sheets_url',sheetsUrl);
-  renderSettingsStatus(); document.getElementById('btnSync').style.display='inline-flex';
-  setSyncStatus('synced','Sheets aktívne');
-  showToast('Sheets URL uložená ✓','success');
-}
-function clearSheetsUrl(){sheetsUrl='';localStorage.removeItem('autoscore_sheets_url');document.getElementById('sheetsUrlInput').value='';renderSettingsStatus();setSyncStatus('','Lokálne');document.getElementById('btnSync').style.display='none';}
+  // ABSOLUTE scores
+  s['Cena kúpy']=absoluteScore(car.price,'price')??50;
+  s['Spotreba']=absoluteScore(car.consumption,'consumption',car.fuel)??50;
+  s['Záruka']=absoluteScore(car.warranty,'warranty')??50;
+  s['Výkon']=absoluteScore(car.power,'power')??50;
 
-function renderSettingsStatus(){
-  // Groq
-  const gEl=document.getElementById('groqKeyStatus'),gClr=document.getElementById('btnClearGroq');
-  if(groqKey){
-    gEl.innerHTML=`<div class="key-saved">✓ ${groqKey.slice(0,8)}...${groqKey.slice(-4)}</div>`;
-    gClr.style.display='inline-flex'; document.getElementById('groqKeyInput').value=groqKey;
-  } else {
-    gEl.innerHTML=`<div style="font-size:12px;color:var(--text3)">⚠️ Kľúč nie je nastavený</div>`;
-    gClr.style.display='none';
-  }
-  // Sheets
-  const sEl=document.getElementById('sheetsUrlStatus'),sClr=document.getElementById('btnClearSheets');
-  if(sheetsUrl){
-    sEl.innerHTML=`<div class="key-saved">✓ URL uložená</div>`;
-    sClr.style.display='inline-flex'; document.getElementById('sheetsUrlInput').value=sheetsUrl;
-  } else {
-    sEl.innerHTML=`<div style="font-size:12px;color:var(--text3)">⚠️ Sheets nie je nastavené</div>`;
-    sClr.style.display='none';
-  }
+  // Relative for comparison-dependent metrics
+  const normN=(v,mn,mx)=>mx===mn?65:clamp(Math.round(((v-mn)/(mx-mn))*100));
+  const invN=(v,mn,mx)=>mx===mn?65:clamp(Math.round((1-(v-mn)/(mx-mn))*100));
+  const vals=key=>all.map(c=>c[key]).filter(x=>x!=null&&x>0);
+
+  const v5=vals('value5y');
+  s['Hodnota po 5r']=car.value5y&&v5.length>1?normN(car.value5y,Math.min(...v5),Math.max(...v5)):(absoluteScore(car.price,'price')||50);
+
+  const hasLeasing=car.leasingMonthly||car.leasingFirst||car.leasingLast;
+  s['Leasing']=!hasLeasing?80:70;
+
+  const c5=calc5y(car);
+  const all5y=all.map(c=>calc5y(c).total).filter(x=>x>0);
+  s['Celk. náklady 5r']=c5.total&&all5y.length>1?invN(c5.total,Math.min(...all5y),Math.max(...all5y)):(c5.total?60:50);
+
+  const ts=vals('trunk');
+  const trS=car.trunk&&ts.length>1?normN(car.trunk,Math.min(...ts),Math.max(...ts)):(absoluteScore(car.trunk,'trunk')||50);
+  const seS=car.seats?clamp(((car.seats-2)/5)*100):50;
+  s['Priestor / kufor']=Math.round((trS+seS)/2);
+
+  const equipCount=car.equip?Object.values(car.equip).filter(Boolean).length:0;
+  s['Výbava']=clamp((car.equipment?car.equipment*8:50)+Math.min(20,equipCount*1.3));
+  s['Pocit z auta']=car.feeling?clamp(car.feeling*10):50;
+  const relMap={diesel:72,petrol:75,hybrid:68,electric:65};
+  s['Spoľahlivosť']=clamp((relMap[car.fuel]||65)+(car.equip?.awd?5:0));
+
+  const totalW=Object.values(weights).reduce((a,b)=>a+b,0);
+  const total=Math.round(Object.entries(weights).reduce((acc,[k,w])=>acc+(s[k]||50)*(w/totalW),0));
+  return{total,breakdown:s};
 }
 
-function copyAppsScript(){
-  const text=document.getElementById('appsScriptCode').textContent;
-  navigator.clipboard.writeText(text).then(()=>showToast('Kód skopírovaný ✓','success')).catch(()=>showToast('Kopírovanie zlyhalo','error'));
-}
-
-// ═══ GOOGLE SHEETS SYNC ═══
-function setSyncStatus(type,text){
-  const el=document.getElementById('syncIndicator');
-  el.className='sync-indicator'+(type?' '+type:'');
-  document.getElementById('syncText').textContent=text;
-}
-
-async function syncNow(){
-  if(!sheetsUrl)return showToast('Nastav Sheets URL v Nastaveniach','error');
-  setSyncStatus('syncing','Synchronizujem...');
+// ═══ AI VERBAL EVAL ═══
+async function getAIEval(car){
+  if(!groqKey)return null;
+  const c5=calc5y(car);
+  const prompt=`Stručne zhodnoť tieto parametre auta ${car.make} ${car.model} pre rakúsky trh (AT). Pre každý parameter daj hodnotenie: "good", "ok", alebo "bad" a 1 vetu vysvetlenia v slovenčine. Vráť IBA JSON:
+{"ratings":[
+  {"param":"Spotreba","value":"${car.consumption||'?'} l/100km","rating":"good|ok|bad","note":"..."},
+  {"param":"Cena","value":"€${car.price||'?'}","rating":"good|ok|bad","note":"..."},
+  {"param":"Záruka","value":"${car.warranty||'?'} rokov","rating":"good|ok|bad","note":"..."},
+  {"param":"Servisné náklady","value":"€${car.service||'?'}/rok","rating":"good|ok|bad","note":"..."},
+  {"param":"Celkové náklady 5r","value":"€${c5.total||'?'}","rating":"good|ok|bad","note":"..."},
+  {"param":"Priestor (kufor)","value":"${car.trunk||'?'} l","rating":"good|ok|bad","note":"..."}
+]}`;
   try{
-    const res=await fetch(sheetsUrl,{
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
-      body:JSON.stringify({action:'write',cars}),
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
+      body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'system',content:'Respond only with valid JSON.'},{role:'user',content:prompt}],temperature:0.1,max_tokens:600,response_format:{type:'json_object'}})
     });
     const data=await res.json();
-    if(data.ok){setSyncStatus('synced','Synced ✓');showToast('Dáta uložené do Google Sheets ✓','success');}
-    else throw new Error(data.error||'Chyba');
-  }catch(e){
-    setSyncStatus('error','Sync chyba');
-    showToast('Sheets sync chyba: '+e.message,'error');
-  }
+    return JSON.parse(data.choices[0].message.content);
+  }catch(e){return null;}
 }
 
+// ═══ SETTINGS ═══
+function saveGroqKey(){const v=document.getElementById('groqKeyInput').value.trim();if(!v)return showToast('Zadaj API kľúč','error');if(!v.startsWith('gsk_'))return showToast('Groq kľúč musí začínať gsk_','error');groqKey=v;localStorage.setItem('autoscore_groq_key',groqKey);renderSettingsStatus();showToast('Groq kľúč uložený ✓','success');}
+function clearGroqKey(){groqKey='';localStorage.removeItem('autoscore_groq_key');document.getElementById('groqKeyInput').value='';renderSettingsStatus();showToast('Kľúč odstránený','success');}
+function saveSheetsUrl(){const v=document.getElementById('sheetsUrlInput').value.trim();if(!v||!v.startsWith('https://script.google.com'))return showToast('Vlož platnú Apps Script URL','error');sheetsUrl=v;localStorage.setItem('autoscore_sheets_url',sheetsUrl);renderSettingsStatus();document.getElementById('btnSync').style.display='inline-flex';setSyncStatus('synced','Sheets aktívne');showToast('Sheets URL uložená ✓','success');}
+function clearSheetsUrl(){sheetsUrl='';localStorage.removeItem('autoscore_sheets_url');document.getElementById('sheetsUrlInput').value='';renderSettingsStatus();setSyncStatus('','Lokálne');document.getElementById('btnSync').style.display='none';}
+function renderSettingsStatus(){
+  const gEl=document.getElementById('groqKeyStatus'),gClr=document.getElementById('btnClearGroq');
+  if(groqKey){gEl.innerHTML=`<div class="key-saved">✓ ${groqKey.slice(0,8)}...${groqKey.slice(-4)}</div>`;gClr.style.display='inline-flex';document.getElementById('groqKeyInput').value=groqKey;}
+  else{gEl.innerHTML=`<div style="font-size:12px;color:var(--text3)">⚠️ Kľúč nie je nastavený</div>`;gClr.style.display='none';}
+  const sEl=document.getElementById('sheetsUrlStatus'),sClr=document.getElementById('btnClearSheets');
+  if(sheetsUrl){sEl.innerHTML=`<div class="key-saved">✓ URL uložená</div>`;sClr.style.display='inline-flex';document.getElementById('sheetsUrlInput').value=sheetsUrl;}
+  else{sEl.innerHTML=`<div style="font-size:12px;color:var(--text3)">⚠️ Sheets nie je nastavené</div>`;sClr.style.display='none';}
+}
+function copyScript(){navigator.clipboard.writeText(document.getElementById('appsScriptCode').textContent).then(()=>showToast('Kód skopírovaný ✓','success')).catch(()=>showToast('Kopírovanie zlyhalo','error'));}
+
+// ═══ SHEETS SYNC ═══
+function setSyncStatus(type,text){const el=document.getElementById('syncIndicator');el.className='sync-indicator'+(type?' '+type:'');document.getElementById('syncText').textContent=text;}
+async function syncNow(){
+  if(!sheetsUrl)return showToast('Nastav Sheets URL','error');
+  setSyncStatus('syncing','Synchronizujem...');
+  try{const res=await fetch(sheetsUrl,{method:'POST',body:JSON.stringify({action:'write',cars})});const data=await res.json();if(data.ok){setSyncStatus('synced','Synced ✓');showToast('Synced ✓','success');}else throw new Error(data.error);}
+  catch(e){setSyncStatus('error','Chyba');showToast('Sync chyba: '+e.message,'error');}
+}
 async function loadFromSheets(){
-  if(!sheetsUrl)return showToast('Nastav Sheets URL v Nastaveniach','error');
+  if(!sheetsUrl)return showToast('Nastav Sheets URL','error');
   setSyncStatus('syncing','Načítavam...');
-  try{
-    const res=await fetch(sheetsUrl+'?action=read');
-    const data=await res.json();
-    if(data.ok&&data.cars){
-      cars=data.cars;
-      saveCars();
-      renderCarsGrid(); renderSummary();
-      setSyncStatus('synced','Synced ✓');
-      showToast(`Načítaných ${cars.length} áut zo Sheets ✓`,'success');
-    } else throw new Error(data.error||'Žiadne dáta');
-  }catch(e){
-    setSyncStatus('error','Sync chyba');
-    showToast('Načítanie zlyhalo: '+e.message,'error');
-  }
+  try{const res=await fetch(sheetsUrl+'?action=read');const data=await res.json();if(data.ok&&data.cars){cars=data.cars;saveCars();renderCarsGrid();setSyncStatus('synced','Synced ✓');showToast(`Načítaných ${cars.length} áut ✓`,'success');}else throw new Error('Žiadne dáta');}
+  catch(e){setSyncStatus('error','Chyba');showToast('Načítanie zlyhalo: '+e.message,'error');}
 }
 
 // ═══ VIEWS ═══
@@ -762,16 +801,15 @@ function showView(name,btn){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   if(btn?.classList?.contains('tab-btn'))btn.classList.add('active');
+  if(name==='compare')renderCompare();
+  if(name==='visual')renderVisual();
+  if(name==='costs')renderCosts();
   if(name==='summary')renderSummary();
 }
-function showDetailView(id){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-detail').classList.add('active');
-  renderDetail(id);
-}
+function showDetailView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById('view-detail').classList.add('active');renderDetail(id);}
 
 // ═══ MODAL ═══
-const FIELDS=['make','model','year','engine','price','power','consumption','trunk','seats','dimensions','warranty','value5y','service','kfz','kasko','leasing-first','leasing-monthly','leasing-last','feeling','equipment','notes','mileage','fuel-price','tyre-summer','tyre-winter','tyre-summer-price','tyre-winter-price'];
+const FIELDS=['make','model','year','engine','price','power','consumption','trunk','seats','warranty','value5y','service','kfz','kasko','leasing-first','leasing-monthly','leasing-last','feeling','equipment','notes','mileage','fuel-price','tyre-summer','tyre-winter','tyre-summer-price','tyre-winter-price','length','width','height'];
 
 function openModal(carId){
   editingId=carId;
@@ -781,18 +819,21 @@ function openModal(carId){
   FIELDS.forEach(f=>{const el=document.getElementById('inp-'+f);if(el)el.value='';});
   document.getElementById('inp-fuel').value='diesel';
   document.getElementById('cost5yPreview').style.display='none';
+  // clear warnings
+  document.querySelectorAll('.field-warning').forEach(w=>w.style.display='none');
+  document.querySelectorAll('.form-input').forEach(i=>i.classList.remove('warn'));
   clearEquip();
 
   if(carId){
     const car=cars.find(c=>c.id===carId);if(!car)return;
-    const map={make:'make',model:'model',year:'year',engine:'engine',price:'price',power:'power',consumption:'consumption',trunk:'trunk',seats:'seats',dimensions:'dimensions',warranty:'warranty',value5y:'value5y',service:'service',kfz:'kfz',kasko:'kasko',feeling:'feeling',equipment:'equipment',notes:'notes',mileage:'mileage',fuelPrice:'fuel-price',tyreSummer:'tyre-summer',tyreWinter:'tyre-winter',tyreSummerPrice:'tyre-summer-price',tyreWinterPrice:'tyre-winter-price',leasingFirst:'leasing-first',leasingMonthly:'leasing-monthly',leasingLast:'leasing-last'};
+    const map={make:'make',model:'model',year:'year',engine:'engine',price:'price',power:'power',consumption:'consumption',trunk:'trunk',seats:'seats',warranty:'warranty',value5y:'value5y',service:'service',kfz:'kfz',kasko:'kasko',feeling:'feeling',equipment:'equipment',notes:'notes',mileage:'mileage',fuelPrice:'fuel-price',tyreSummer:'tyre-summer',tyreWinter:'tyre-winter',tyreSummerPrice:'tyre-summer-price',tyreWinterPrice:'tyre-winter-price',leasingFirst:'leasing-first',leasingMonthly:'leasing-monthly',leasingLast:'leasing-last',carLength:'length',carWidth:'width',carHeight:'height'};
     Object.entries(map).forEach(([k,fid])=>{const el=document.getElementById('inp-'+fid);if(el&&car[k]!=null)el.value=car[k];});
     document.getElementById('inp-fuel').value=car.fuel||'diesel';
     if(car.equip)Object.entries(car.equip).forEach(([k,v])=>setCb(k,v));
     document.getElementById('aiFieldsSection').style.display='block';
     document.getElementById('manualToggleSection').style.display='none';
     updateCost5yPreview();
-  } else {
+  }else{
     document.getElementById('aiFieldsSection').style.display='none';
     document.getElementById('manualToggleSection').style.display='block';
   }
@@ -800,192 +841,83 @@ function openModal(carId){
 function closeModal(){document.getElementById('carModal').classList.remove('open');editingId=null;}
 function showManualFields(){document.getElementById('aiFieldsSection').style.display='block';document.getElementById('manualToggleSection').style.display='none';}
 
-// ═══ GROQ AI ═══
+// ═══ GROQ ═══
 async function fetchGroq(){
-  const make=document.getElementById('inp-make').value.trim();
-  const model=document.getElementById('inp-model').value.trim();
-  if(!make||!model)return showToast('Zadaj aspoň značku a model','error');
-  if(!groqKey){showView('settings',document.querySelectorAll('.tab-btn')[3]);return showToast('Nastav Groq API kľúč v Nastaveniach','error');}
-
+  const make=document.getElementById('inp-make').value.trim(),model=document.getElementById('inp-model').value.trim();
+  if(!make||!model)return showToast('Zadaj značku a model','error');
+  if(!groqKey){showView('settings',document.querySelectorAll('.tab-btn')[6]);return showToast('Nastav Groq API kľúč','error');}
   document.getElementById('aiLoadingBar').style.display='flex';
   document.getElementById('btnFetchAI').disabled=true;
-  document.getElementById('aiLoadingText').textContent='Groq AI dopĺňa parametre...';
-
   const carDesc=[document.getElementById('inp-year').value,make,model,document.getElementById('inp-engine').value].filter(Boolean).join(' ');
   const mileage=document.getElementById('inp-mileage').value||'20000';
-
-  const prompt=`Car expert for Austrian market (AT, EUR). For "${carDesc}" annual mileage ${mileage}km. Return ONLY valid JSON:
-{
-  "power_kw":number,"consumption":number,"trunk_l":number,"seats":number,"dimensions":"LxW cm",
-  "fuel":"diesel|petrol|hybrid|electric","awd_standard":boolean,"warranty_years":number,
-  "value_5y_pct":number,"service_annual":number,"kfz_monthly":number,"kasko_monthly":number,
-  "leasing_first":number,"leasing_monthly":number,"leasing_last":number,
-  "tyre_summer_size":"e.g. 225/45 R18","tyre_winter_size":"e.g. 215/55 R17",
-  "tyre_summer_price_set":number,"tyre_winter_price_set":number,
-  "fuel_price_per_unit":number,"equipment_score":number,
-  "equip":{"hud":bool,"vent_seats":bool,"heated_seats":bool,"massage_seats":bool,"adaptive_cc":bool,"lane_assist":bool,"parking_sensors":bool,"camera_360":bool,"wireless_charge":bool,"pano_roof":bool,"led_matrix":bool,"nav":bool,"keyless":bool,"trailer_hitch":bool,"air_susp":bool,"sound_system":bool}
-}`;
-
+  const prompt=`Car expert Austrian market (AT, EUR). For "${carDesc}" annual mileage ${mileage}km. Return ONLY valid JSON:
+{"power_kw":n,"consumption":n,"trunk_l":n,"seats":n,"car_length_cm":n,"car_width_cm":n,"car_height_cm":n,"fuel":"diesel|petrol|hybrid|electric","awd_standard":bool,"warranty_years":n,"value_5y_pct":n,"service_annual":n,"kfz_monthly":n,"kasko_monthly":n,"leasing_first":n,"leasing_monthly":n,"leasing_last":n,"tyre_summer_size":"225/45 R18","tyre_winter_size":"215/55 R17","tyre_summer_price_set":n,"tyre_winter_price_set":n,"fuel_price_per_unit":n,"equipment_score":n,"equip":{"hud":bool,"vent_seats":bool,"heated_seats":bool,"massage_seats":bool,"adaptive_cc":bool,"lane_assist":bool,"parking_sensors":bool,"camera_360":bool,"wireless_charge":bool,"pano_roof":bool,"led_matrix":bool,"nav":bool,"keyless":bool,"trailer_hitch":bool,"air_susp":bool,"sound_system":bool}}`;
   try{
-    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
-      body:JSON.stringify({
-        model:'llama-3.3-70b-versatile',
-        messages:[
-          {role:'system',content:'You are a car data expert for Austria. Respond ONLY with valid JSON, no markdown, no text.'},
-          {role:'user',content:prompt}
-        ],
-        temperature:0.1,max_tokens:900,
-        response_format:{type:'json_object'}
-      })
-    });
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'system',content:'Respond ONLY with valid JSON, no markdown.'},{role:'user',content:prompt}],temperature:0.1,max_tokens:900,response_format:{type:'json_object'}})});
     const data=await res.json();
     if(!res.ok)throw new Error(data.error?.message||`HTTP ${res.status}`);
     const d=JSON.parse(data.choices[0].message.content);
-
     const sv=(id,val)=>{const el=document.getElementById('inp-'+id);if(el&&val!=null)el.value=val;};
-    sv('power',d.power_kw); sv('consumption',d.consumption); sv('trunk',d.trunk_l);
-    sv('seats',d.seats); sv('dimensions',d.dimensions); sv('warranty',d.warranty_years);
-    sv('service',d.service_annual); sv('kfz',d.kfz_monthly); sv('kasko',d.kasko_monthly);
-    sv('leasing-first',d.leasing_first); sv('leasing-monthly',d.leasing_monthly); sv('leasing-last',d.leasing_last);
-    sv('tyre-summer',d.tyre_summer_size); sv('tyre-winter',d.tyre_winter_size);
-    sv('tyre-summer-price',d.tyre_summer_price_set); sv('tyre-winter-price',d.tyre_winter_price_set);
-    sv('fuel-price',d.fuel_price_per_unit); sv('equipment',d.equipment_score);
+    sv('power',d.power_kw);sv('consumption',d.consumption);sv('trunk',d.trunk_l);sv('seats',d.seats);
+    sv('length',d.car_length_cm);sv('width',d.car_width_cm);sv('height',d.car_height_cm);
+    sv('warranty',d.warranty_years);sv('service',d.service_annual);sv('kfz',d.kfz_monthly);sv('kasko',d.kasko_monthly);
+    sv('leasing-first',d.leasing_first);sv('leasing-monthly',d.leasing_monthly);sv('leasing-last',d.leasing_last);
+    sv('tyre-summer',d.tyre_summer_size);sv('tyre-winter',d.tyre_winter_size);
+    sv('tyre-summer-price',d.tyre_summer_price_set);sv('tyre-winter-price',d.tyre_winter_price_set);
+    sv('fuel-price',d.fuel_price_per_unit);sv('equipment',d.equipment_score);
     if(d.fuel)document.getElementById('inp-fuel').value=d.fuel;
     const price=parseFloat(document.getElementById('inp-price').value)||0;
     if(price&&d.value_5y_pct)sv('value5y',Math.round(price*d.value_5y_pct/100));
     if(d.awd_standard)setCb('awd',true);
     if(d.equip)Object.entries(d.equip).forEach(([k,v])=>setCb(k,v));
-
+    // Validate all fields
+    ['consumption','price','power','trunk','warranty','service','kfz','kasko','mileage','feeling','equipment','length'].forEach(f=>{const el=document.getElementById('inp-'+f);if(el&&el.value)validateField(el,f);});
     document.getElementById('aiFieldsSection').style.display='block';
     document.getElementById('manualToggleSection').style.display='none';
     updateCost5yPreview();
-    showToast('Groq doplnilo parametre ✓ — skontroluj a uprav','success');
-  }catch(e){
-    console.error(e);
-    showToast('Groq chyba: '+e.message,'error');
-  }finally{
-    document.getElementById('aiLoadingBar').style.display='none';
-    document.getElementById('btnFetchAI').disabled=false;
-  }
+    showToast('Groq doplnilo parametre ✓','success');
+  }catch(e){showToast('Groq chyba: '+e.message,'error');}
+  finally{document.getElementById('aiLoadingBar').style.display='none';document.getElementById('btnFetchAI').disabled=false;}
 }
 
-// ═══ SAVE CAR ═══
+// ═══ SAVE ═══
 function saveCar(){
-  const make=document.getElementById('inp-make').value.trim();
-  const model=document.getElementById('inp-model').value.trim();
-  const price=parseFloat(document.getElementById('inp-price').value);
+  const make=document.getElementById('inp-make').value.trim(),model=document.getElementById('inp-model').value.trim(),price=parseFloat(document.getElementById('inp-price').value);
   if(!make||!model)return showToast('Zadaj značku a model','error');
   if(!price)return showToast('Zadaj kúpnu cenu','error');
-
   const gN=id=>parseFloat(document.getElementById('inp-'+id)?.value)||null;
   const gS=id=>document.getElementById('inp-'+id)?.value||'';
-
-  const data={
-    make,model,price,
-    year:gS('year'),engine:gS('engine'),dimensions:gS('dimensions'),notes:gS('notes'),
-    fuel:document.getElementById('inp-fuel').value||'petrol',
-    power:gN('power'),consumption:gN('consumption'),trunk:gN('trunk'),seats:gN('seats'),
-    warranty:gN('warranty'),value5y:gN('value5y'),service:gN('service'),
-    kfz:gN('kfz'),kasko:gN('kasko'),
-    leasingFirst:gN('leasing-first'),leasingMonthly:gN('leasing-monthly'),leasingLast:gN('leasing-last'),
-    mileage:gN('mileage'),fuelPrice:gN('fuel-price'),
-    tyreSummer:gS('tyre-summer'),tyreWinter:gS('tyre-winter'),
-    tyreSummerPrice:gN('tyre-summer-price'),tyreWinterPrice:gN('tyre-winter-price'),
-    feeling:gN('feeling'),equipment:gN('equipment'),
-    equip:getEquip(),
-  };
-
-  if(editingId){
-    const i=cars.findIndex(c=>c.id===editingId);
-    if(i!==-1)cars[i]={...cars[i],...data};
-    showToast(`${make} ${model} aktualizovaný ✓`,'success');
-  }else{
-    cars.push({id:Date.now(),...data});
-    showToast(`${make} ${model} pridaný ✓`,'success');
-  }
-  saveCars();closeModal();renderCarsGrid();renderSummary();
+  const data={make,model,price,year:gS('year'),engine:gS('engine'),notes:gS('notes'),fuel:document.getElementById('inp-fuel').value||'petrol',power:gN('power'),consumption:gN('consumption'),trunk:gN('trunk'),seats:gN('seats'),warranty:gN('warranty'),value5y:gN('value5y'),service:gN('service'),kfz:gN('kfz'),kasko:gN('kasko'),leasingFirst:gN('leasing-first'),leasingMonthly:gN('leasing-monthly'),leasingLast:gN('leasing-last'),mileage:gN('mileage'),fuelPrice:gN('fuel-price'),tyreSummer:gS('tyre-summer'),tyreWinter:gS('tyre-winter'),tyreSummerPrice:gN('tyre-summer-price'),tyreWinterPrice:gN('tyre-winter-price'),carLength:gN('length'),carWidth:gN('width'),carHeight:gN('height'),feeling:gN('feeling'),equipment:gN('equipment'),equip:getEquip()};
+  if(editingId){const i=cars.findIndex(c=>c.id===editingId);if(i!==-1)cars[i]={...cars[i],...data};showToast(`${make} ${model} aktualizovaný ✓`,'success');}
+  else{cars.push({id:Date.now(),...data});showToast(`${make} ${model} pridaný ✓`,'success');}
+  saveCars();closeModal();renderCarsGrid();
   if(sheetsUrl)syncNow();
 }
-
-function deleteCar(id){
-  cars=cars.filter(c=>c.id!==id);
-  saveCars();renderCarsGrid();renderSummary();
-  if(sheetsUrl)syncNow();
-  showToast('Auto odstránené','success');
-}
+function deleteCar(id){cars=cars.filter(c=>c.id!==id);saveCars();renderCarsGrid();if(sheetsUrl)syncNow();showToast('Auto odstránené','success');}
 function saveCars(){localStorage.setItem('autoscore_cars',JSON.stringify(cars));}
-
-// ═══ SCORING ═══
-function scoreCar(car,all){
-  const clamp=v=>Math.max(0,Math.min(100,v));
-  const invN=(v,mn,mx)=>mx===mn?65:clamp(Math.round((1-(v-mn)/(mx-mn))*100));
-  const normN=(v,mn,mx)=>mx===mn?65:clamp(Math.round(((v-mn)/(mx-mn))*100));
-  const vals=key=>all.map(c=>c[key]).filter(x=>x!=null&&x>0);
-  const s={};
-
-  s['Cena kúpy']=car.price?invN(car.price,Math.min(...vals('price')),Math.max(...vals('price'))):50;
-
-  const v5=vals('value5y');
-  s['Hodnota po 5r']=car.value5y&&v5.length>1?normN(car.value5y,Math.min(...v5),Math.max(...v5)):(car.value5y?60:40);
-
-  const hasLeasing=car.leasingMonthly||car.leasingFirst||car.leasingLast;
-  const leasingTotal5y=hasLeasing?(car.leasingFirst||0)+(car.leasingMonthly||0)*60+(car.leasingLast||0):null;
-  const allLease=all.map(c=>c.leasingMonthly||(c.leasingFirst||0)+(c.leasingMonthly||0)*60+(c.leasingLast||0)).filter(x=>x>0);
-  s['Leasing']=!leasingTotal5y?80:(allLease.length>1?invN(leasingTotal5y,Math.min(...allLease),Math.max(...allLease)):50);
-
-  // 5y total cost score
-  const c5=calc5y(car);
-  const all5y=all.map(c=>calc5y(c).total).filter(x=>x>0);
-  s['Celk. náklady 5r']=c5.total&&all5y.length>1?invN(c5.total,Math.min(...all5y),Math.max(...all5y)):(c5.total?60:50);
-
-  const cs=vals('consumption');
-  s['Spotreba']=car.consumption&&cs.length>1?invN(car.consumption,Math.min(...cs),Math.max(...cs)):(car.consumption?60:50);
-
-  const ws=vals('warranty');
-  s['Záruka']=car.warranty&&ws.length>1?normN(car.warranty,Math.min(...ws),Math.max(...ws)):(car.warranty?65:40);
-
-  const ts=vals('trunk');
-  const trS=car.trunk&&ts.length>1?normN(car.trunk,Math.min(...ts),Math.max(...ts)):(car.trunk?65:50);
-  const seS=car.seats?clamp(((car.seats-2)/5)*100):50;
-  s['Priestor / kufor']=Math.round((trS+seS)/2);
-
-  const ps=vals('power');
-  s['Výkon']=car.power&&ps.length>1?normN(car.power,Math.min(...ps),Math.max(...ps)):(car.power?65:50);
-
-  const equipCount=car.equip?Object.values(car.equip).filter(Boolean).length:0;
-  s['Výbava']=clamp((car.equipment?car.equipment*8:50)+Math.min(20,equipCount*1.3));
-
-  s['Pocit z auta']=car.feeling?clamp(car.feeling*10):50;
-
-  const relMap={diesel:72,petrol:75,hybrid:68,electric:65};
-  s['Spoľahlivosť']=clamp((relMap[car.fuel]||65)+(car.equip?.awd?5:0));
-
-  const totalW=Object.values(weights).reduce((a,b)=>a+b,0);
-  const total=Math.round(Object.entries(weights).reduce((acc,[k,w])=>acc+(s[k]||50)*(w/totalW),0));
-  return{total,breakdown:s};
-}
 
 // ═══ RENDER CARS ═══
 function renderCarsGrid(){
   const grid=document.getElementById('carsGrid'),count=document.getElementById('carCount');
-  if(!cars.length){
-    count.textContent='Zatiaľ žiadne autá';
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🚗</div><div class="empty-title">Žiadne autá</div><div class="empty-sub">Pridaj prvé auto a začni porovnávať</div><button class="btn btn-primary" onclick="openModal(null)">+ Pridať auto</button></div>`;
-    return;
-  }
+  if(!cars.length){count.textContent='Zatiaľ žiadne autá';grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🚗</div><div class="empty-title">Žiadne autá</div><div class="empty-sub">Pridaj prvé auto a začni porovnávať</div><button class="btn btn-primary" onclick="openModal(null)">+ Pridať auto</button></div>`;return;}
   count.textContent=`${cars.length} auto${cars.length>1&&cars.length<5?'á':''}`;
-  grid.innerHTML=cars.map(car=>{
-    const {total}=scoreCar(car,cars);
+  grid.innerHTML=cars.map((car,ci)=>{
+    const{total}=scoreCar(car,cars);
     const sc=total>=70?'score-high':total>=50?'score-mid':'score-low';
     const bc=total>=70?'var(--green)':total>=50?'var(--accent)':'var(--red)';
-    const {total:cost5y}=calc5y(car);
+    const{total:cost5y}=calc5y(car);
     const eq=car.equip||{};
     const tags=[eq.awd?'<span class="equip-tag awd">AWD</span>':'',eq.hud?'<span class="equip-tag">HUD</span>':'',eq.vent_seats?'<span class="equip-tag">Vent. sed.</span>':'',eq.pano_roof?'<span class="equip-tag">Panoráma</span>':''].filter(Boolean).join('');
-    return `<div class="car-card">
+    // Check for warnings
+    const hasWarnings=checkCarWarnings(car);
+    return `<div class="car-card" style="border-color:${CAR_COLORS[ci%CAR_COLORS.length]}33">
       <div class="car-card-header" onclick="showDetailView(${car.id})">
-        <div><div class="car-card-name">${car.make} ${car.model}</div><div class="car-card-sub">${car.year||''} ${car.engine||''} <span class="tag tag-${car.fuel}">${FL[car.fuel]||''}</span></div>${tags?`<div class="equip-tags">${tags}</div>`:''}</div>
+        <div>
+          <div class="car-card-name" style="color:${CAR_COLORS[ci%CAR_COLORS.length]}">${car.make} ${car.model}</div>
+          <div class="car-card-sub">${car.year||''} ${car.engine||''} <span class="tag tag-${car.fuel}">${FL[car.fuel]||''}</span></div>
+          ${tags?`<div class="equip-tags">${tags}</div>`:''}
+          ${hasWarnings?`<div class="warn-badge">⚠️ Skontroluj hodnoty</div>`:''}
+        </div>
         <div class="score-badge ${sc}"><span>${total}</span><span class="score-label">SKÓRE</span></div>
       </div>
       <div class="car-card-body" onclick="showDetailView(${car.id})">
@@ -994,11 +926,11 @@ function renderCarsGrid(){
           <div><div class="mini-stat-label">Cena</div><div class="mini-stat-value">${car.price?'€'+car.price.toLocaleString():'—'}</div></div>
           <div><div class="mini-stat-label">Spotreba</div><div class="mini-stat-value">${car.consumption?car.consumption+'l/100':'—'}</div></div>
           <div><div class="mini-stat-label">Náklady 5r</div><div class="mini-stat-value">${cost5y?'€'+cost5y.toLocaleString():'—'}</div></div>
-          <div><div class="mini-stat-label">Mesačne</div><div class="mini-stat-value">${car.leasingMonthly?'€'+car.leasingMonthly+'/m':car.kfz||car.kasko?'€'+Math.round(((car.kfz||0)+(car.kasko||0)))+'/m':'—'}</div></div>
+          <div><div class="mini-stat-label">Rozmery</div><div class="mini-stat-value">${car.carLength?car.carLength+'cm':'—'}</div></div>
         </div>
       </div>
       <div class="car-card-actions">
-        <button class="btn btn-edit btn-sm" style="flex:1" onclick="openModal(${car.id})">✏️ Editovať</button>
+        <button class="btn btn-edit btn-sm" style="flex:1" onclick="openModal(${car.id})">✏️ Edit</button>
         <button class="btn btn-secondary btn-sm" style="flex:1" onclick="showDetailView(${car.id})">Detail →</button>
         <button class="btn btn-danger btn-sm" onclick="if(confirm('Odstrániť?'))deleteCar(${car.id})">🗑</button>
       </div>
@@ -1006,47 +938,364 @@ function renderCarsGrid(){
   }).join('');
 }
 
+function checkCarWarnings(car){
+  const fuel=car.fuel||'petrol';
+  const b=BENCHMARKS.consumption[fuel]||BENCHMARKS.consumption.petrol;
+  if(car.consumption&&car.consumption>b.warn_high)return true;
+  if(car.price&&car.price>150000)return true;
+  if(car.service&&car.service>5000)return true;
+  if(car.power&&car.power>500)return true;
+  return false;
+}
+
+// ═══ COMPARE TABLE ═══
+function renderCompare(){
+  const el=document.getElementById('compareContent');
+  if(cars.length<2){el.innerHTML=`<div class="empty-state"><div class="empty-icon">⚖️</div><div class="empty-title">Pridaj aspoň 2 autá</div><div class="empty-sub">Porovnávacia tabuľka sa zobrazí keď máš 2+ autá</div></div>`;return;}
+
+  const scored=cars.map(c=>({car:c,...scoreCar(c,cars)}));
+
+  const PARAMS=[
+    {section:'💰 Financie'},
+    {key:'price',label:'Kúpna cena (€)',fmt:v=>v?'€'+v.toLocaleString():'—',lower:true},
+    {key:'value5y',label:'Hodnota po 5r (€)',fmt:v=>v?'€'+v.toLocaleString():'—',lower:false},
+    {key:'leasingMonthly',label:'Leasing/mesiac (€)',fmt:v=>v?'€'+v:'—',lower:true},
+    {section:'⚙️ Technické'},
+    {key:'power',label:'Výkon (kW / PS)',fmt:v=>v?v+' kW / '+(v*1.36|0)+' PS':'—',lower:false},
+    {key:'consumption',label:'Spotreba (l/100km)',fmt:v=>v?v+'l':'—',lower:true},
+    {key:'warranty',label:'Záruka (roky)',fmt:v=>v?v+' r':'—',lower:false},
+    {section:'📐 Rozmery'},
+    {key:'carLength',label:'Dĺžka (cm)',fmt:v=>v?v+' cm':'—',lower:false},
+    {key:'carWidth',label:'Šírka (cm)',fmt:v=>v?v+' cm':'—',lower:false},
+    {key:'carHeight',label:'Výška (cm)',fmt:v=>v?v+' cm':'—',lower:false},
+    {key:'trunk',label:'Kufor (l)',fmt:v=>v?v+' l':'—',lower:false},
+    {key:'seats',label:'Počet miest',fmt:v=>v||'—',lower:false},
+    {section:'💸 Ročné náklady'},
+    {key:'service',label:'Servis (€/rok)',fmt:v=>v?'€'+v:'—',lower:true},
+    {key:'kfz',label:'KFZ (€/mes)',fmt:v=>v?'€'+v:'—',lower:true},
+    {key:'kasko',label:'Kasko (€/mes)',fmt:v=>v?'€'+v:'—',lower:true},
+    {section:'⛽ Palivo & Jazda'},
+    {key:'mileage',label:'Ročný nájazd (km)',fmt:v=>v?v.toLocaleString()+' km':'—',lower:false},
+    {key:'fuelPrice',label:'Cena paliva (€/l)',fmt:v=>v?'€'+v:'—',lower:true},
+    {section:'⭐ Hodnotenie'},
+    {key:'feeling',label:'Pocit z auta (1-10)',fmt:v=>v?v+'/10':'—',lower:false},
+    {key:'equipment',label:'Výbava/tech (1-10)',fmt:v=>v?v+'/10':'—',lower:false},
+    {section:'🏆 Skóre'},
+    {key:'_score',label:'Celkové skóre',fmt:v=>v+'/100',lower:false},
+    {key:'_cost5y',label:'Celkové náklady 5r',fmt:v=>v?'€'+v.toLocaleString():'—',lower:true},
+  ];
+
+  const carColors=cars.map((_,i)=>CAR_COLORS[i%CAR_COLORS.length]);
+
+  let html=`<div class="compare-wrap"><table class="compare-table"><thead><tr><th>Parameter</th>`;
+  cars.forEach((car,i)=>html+=`<th class="car-col" style="color:${carColors[i]}">${car.make}<br>${car.model}<br><span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;font-weight:400">${car.year||''}</span></th>`);
+  html+=`</tr></thead><tbody>`;
+
+  PARAMS.forEach(param=>{
+    if(param.section){html+=`<tr class="section-row"><td colspan="${cars.length+1}">${param.section}</td></tr>`;return;}
+
+    const values=cars.map(car=>{
+      if(param.key==='_score')return scoreCar(car,cars).total;
+      if(param.key==='_cost5y')return calc5y(car).total||null;
+      return car[param.key]??null;
+    });
+
+    const numVals=values.filter(v=>v!=null&&v>0);
+    const best=numVals.length?( param.lower?Math.min(...numVals):Math.max(...numVals) ):null;
+    const worst=numVals.length>1?( param.lower?Math.max(...numVals):Math.min(...numVals) ):null;
+
+    html+=`<tr><td class="param-name">${param.label}</td>`;
+    values.forEach((v,i)=>{
+      let cls='car-val';
+      if(v!=null&&v===best&&numVals.length>1)cls+=' best';
+      else if(v!=null&&v===worst&&numVals.length>1)cls+=' worst';
+      html+=`<td class="${cls}">${param.fmt(v)}</td>`;
+    });
+    html+=`</tr>`;
+  });
+
+  // Equipment compare
+  html+=`<tr class="section-row"><td colspan="${cars.length+1}">✅ Výbava</td></tr>`;
+  [{id:'awd',label:'AWD / 4x4'},...EQUIPMENT].forEach(eq=>{
+    html+=`<tr><td class="param-name" style="font-size:11px">${eq.label.replace(/^\S+\s/,'')}</td>`;
+    cars.forEach(car=>{
+      const has=car.equip?.[eq.id];
+      html+=`<td class="car-val">${has?'<span style="color:var(--green)">✓</span>':'<span style="color:var(--text3)">—</span>'}</td>`;
+    });
+    html+=`</tr>`;
+  });
+
+  html+=`</tbody></table></div>`;
+  el.innerHTML=html;
+}
+
+// ═══ SVG SIZE VISUALIZATION ═══
+function renderVisual(){
+  const el=document.getElementById('visualContent');
+  const carsWithSize=cars.filter(c=>c.carLength&&c.carWidth);
+  if(!carsWithSize.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📐</div><div class="empty-title">Žiadne rozmery</div><div class="empty-sub">Pridaj autá s rozmermi (dĺžka a šírka) aby si videl vizualizáciu</div></div>`;return;}
+
+  const maxLen=Math.max(...carsWithSize.map(c=>c.carLength));
+  const maxWid=Math.max(...carsWithSize.map(c=>c.carWidth));
+  const svgW=Math.min(window.innerWidth-80,900);
+  const scale=(svgW-120)/(maxLen*1.1);
+  const carH=50; // height of each car strip
+  const gap=30;
+  const svgH=carsWithSize.length*(carH+gap)+40;
+
+  let svgContent=`<svg viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${svgW}px;display:block">`;
+
+  // Grid lines
+  for(let len=300;len<=maxLen+50;len+=50){
+    const x=60+len*scale;
+    svgContent+=`<line x1="${x}" y1="0" x2="${x}" y2="${svgH}" stroke="#2a2a38" stroke-width="1"/>`;
+    svgContent+=`<text x="${x}" y="${svgH-5}" text-anchor="middle" fill="#5a5a70" font-size="10" font-family="DM Sans">${len}</text>`;
+  }
+
+  carsWithSize.forEach((car,i)=>{
+    const color=CAR_COLORS[cars.indexOf(car)%CAR_COLORS.length];
+    const y=20+i*(carH+gap);
+    const rectW=car.carLength*scale;
+    const rectH=car.carWidth*scale*0.25; // proportional but compressed
+    const actualH=Math.max(20,Math.min(carH-10,rectH));
+    const cy=y+(carH-actualH)/2;
+
+    // Car body
+    svgContent+=`<rect x="60" y="${cy}" width="${rectW}" height="${actualH}" rx="6" fill="${color}22" stroke="${color}" stroke-width="2"/>`;
+
+    // Wheels (simplified)
+    const wheelR=actualH*0.35;
+    const wheelY=cy+actualH;
+    svgContent+=`<circle cx="${60+rectW*0.18}" cy="${wheelY}" r="${wheelR}" fill="${color}44" stroke="${color}" stroke-width="1.5"/>`;
+    svgContent+=`<circle cx="${60+rectW*0.82}" cy="${wheelY}" r="${wheelR}" fill="${color}44" stroke="${color}" stroke-width="1.5"/>`;
+
+    // Windows (simplified)
+    const winX=60+rectW*0.25;
+    const winW=rectW*0.5;
+    const winH=actualH*0.45;
+    svgContent+=`<rect x="${winX}" y="${cy+3}" width="${winW}" height="${winH}" rx="3" fill="${color}33" stroke="${color}88" stroke-width="1"/>`;
+
+    // Label
+    svgContent+=`<text x="55" y="${cy+actualH/2+5}" text-anchor="end" fill="${color}" font-size="12" font-weight="600" font-family="DM Sans">${car.make}</text>`;
+    svgContent+=`<text x="${60+rectW+8}" y="${cy+actualH/2}" fill="${color}" font-size="11" font-family="DM Mono">${car.carLength}×${car.carWidth}cm</text>`;
+
+    // Model below
+    svgContent+=`<text x="55" y="${cy+actualH/2+18}" text-anchor="end" fill="#5a5a70" font-size="10" font-family="DM Sans">${car.model}</text>`;
+  });
+
+  svgContent+=`</svg>`;
+
+  // Trunk comparison bar chart
+  const carsWithTrunk=cars.filter(c=>c.trunk);
+  let trunkHTML='';
+  if(carsWithTrunk.length){
+    const maxTrunk=Math.max(...carsWithTrunk.map(c=>c.trunk));
+    trunkHTML=`
+    <div class="viz-container" style="margin-top:16px">
+      <div class="viz-title">🧳 Objem kufra</div>
+      <div style="display:flex;gap:12px;align-items:flex-end;min-height:120px">
+        ${cars.filter(c=>c.trunk).map((car,i)=>{
+          const ci=cars.indexOf(car);
+          const color=CAR_COLORS[ci%CAR_COLORS.length];
+          const pct=Math.round((car.trunk/maxTrunk)*100);
+          return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:1">
+            <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:${color}">${car.trunk}l</div>
+            <div style="width:100%;max-width:60px;height:${pct}px;background:${color}33;border:1px solid ${color};border-radius:4px 4px 0 0"></div>
+            <div style="font-size:11px;color:var(--text2);text-align:center">${car.make}<br>${car.model}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  el.innerHTML=`
+    <div class="viz-container">
+      <div class="viz-title">🚗 Pôdorys áut v mierke (dĺžka v cm)</div>
+      ${svgContent}
+      <div class="viz-legend">
+        ${carsWithSize.map((car,i)=>{const ci=cars.indexOf(car);return `<div class="viz-legend-item"><div class="viz-legend-dot" style="background:${CAR_COLORS[ci%CAR_COLORS.length]}"></div>${car.make} ${car.model}: ${car.carLength}×${car.carWidth}cm${car.carHeight?' ×'+car.carHeight+'cm':''}</div>`;}).join('')}
+      </div>
+    </div>
+    ${trunkHTML}`;
+}
+
+// ═══ COSTS CHART ═══
+function renderCosts(){
+  const el=document.getElementById('costsContent');
+  if(!cars.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">💰</div><div class="empty-title">Žiadne autá</div></div>`;return;}
+
+  const scored=cars.map(c=>({car:c,c5:calc5y(c)}));
+  const maxTotal=Math.max(...scored.map(s=>s.c5.total||0),1);
+  const chartH=220;
+
+  const barsHTML=scored.map((s,i)=>{
+    const ci=i;
+    const color=CAR_COLORS[ci%CAR_COLORS.length];
+    const total=s.c5.total||0;
+    const pct=total/maxTotal;
+    const segs=[
+      {key:'depreciation',v:s.c5.depreciation||0},
+      {key:'leasing',v:s.c5.leasingTotal||0},
+      {key:'fuel',v:s.c5.fuel5y||0},
+      {key:'insurance',v:s.c5.ins5y||0},
+      {key:'service',v:s.c5.service5y||0},
+      {key:'tyres',v:s.c5.tyres5y||0},
+    ].filter(sg=>sg.v>0);
+    const segTotal=segs.reduce((a,b)=>a+b.v,0)||1;
+
+    const segsHTML=segs.map(sg=>{
+      const h=Math.round((sg.v/segTotal)*pct*chartH);
+      return `<div class="bar-seg" style="height:${h}px;background:${COST_COLORS[sg.key]};min-height:${h>0?2:0}px" title="${sg.key}: €${sg.v.toLocaleString()}"></div>`;
+    }).join('');
+
+    return `<div class="bar-group">
+      <div class="bar-total">${total?'€'+Math.round(total/1000)+'k':'—'}</div>
+      <div class="bar-stack" style="height:${Math.round(pct*chartH)}px;justify-content:flex-end">${segsHTML}</div>
+      <div class="bar-label" style="color:${color}">${s.car.make}<br><span style="font-weight:400">${s.car.model}</span></div>
+    </div>`;
+  }).join('');
+
+  const legendHTML=Object.entries(COST_COLORS).map(([k,c])=>{
+    const labels={depreciation:'Odpis hodnoty',leasing:'Leasing',fuel:'Palivo',insurance:'Poistenie',service:'Servis',tyres:'Pneumatiky'};
+    return `<div class="chart-legend-item"><div class="chart-legend-dot" style="background:${c}"></div>${labels[k]}</div>`;
+  }).join('');
+
+  // Per-car breakdown table
+  const tableHTML=`<div style="overflow-x:auto;margin-top:20px"><table style="width:100%;border-collapse:collapse;background:var(--bg2);border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+    <thead><tr>
+      <th style="padding:10px 14px;background:var(--bg3);font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;text-align:left;border-bottom:1px solid var(--border)">Kategória</th>
+      ${scored.map((s,i)=>`<th style="padding:10px 14px;background:var(--bg3);font-size:11px;color:${CAR_COLORS[i%CAR_COLORS.length]};text-transform:uppercase;letter-spacing:0.5px;text-align:center;border-bottom:1px solid var(--border)">${s.car.make} ${s.car.model}</th>`).join('')}
+    </tr></thead>
+    <tbody>
+      ${[{label:'Odpis hodnoty',key:'depreciation'},{label:'Leasing 5r',key:'leasingTotal'},{label:'Palivo 5r',key:'fuel5y'},{label:'Poistenie 5r',key:'ins5y'},{label:'Servis 5r',key:'service5y'},{label:'Pneumatiky 5r',key:'tyres5y'}].map(row=>`
+        <tr>
+          <td style="padding:10px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:2px;background:${COST_COLORS[{depreciation:'depreciation',leasingTotal:'leasing',fuel5y:'fuel',ins5y:'insurance',service5y:'service',tyres5y:'tyres'}[row.key]]};display:inline-block"></span>${row.label}</td>
+          ${scored.map(s=>{
+            const v=s.c5[row.key];
+            const vals=scored.map(x=>x.c5[row.key]).filter(Boolean);
+            const isBest=v&&vals.length>1&&v===Math.min(...vals);
+            const isWorst=v&&vals.length>1&&v===Math.max(...vals);
+            return `<td style="padding:10px 14px;font-family:'DM Mono',monospace;font-size:13px;text-align:center;border-bottom:1px solid var(--border);color:${isBest?'var(--green)':isWorst?'var(--red)':'var(--text)'};font-weight:${isBest||isWorst?'600':'400'}">${v&&v>0?'€'+v.toLocaleString():'—'}</td>`;
+          }).join('')}
+        </tr>`).join('')}
+      <tr style="background:rgba(240,165,0,0.05)">
+        <td style="padding:12px 14px;font-size:14px;font-weight:600;color:var(--accent)">CELKOM 5 rokov</td>
+        ${scored.map((s,i)=>{
+          const vals=scored.map(x=>x.c5.total).filter(Boolean);
+          const isBest=s.c5.total&&vals.length>1&&s.c5.total===Math.min(...vals);
+          return `<td style="padding:12px 14px;font-family:'Bebas Neue',sans-serif;font-size:20px;text-align:center;color:${isBest?'var(--green)':'var(--accent)'}">${s.c5.total?'€'+s.c5.total.toLocaleString():'—'}</td>`;
+        }).join('')}
+      </tr>
+    </tbody>
+  </table></div>`;
+
+  el.innerHTML=`
+    <div class="chart-container">
+      <div class="chart-title">Celkové náklady za 5 rokov</div>
+      <div class="bar-chart">${barsHTML}</div>
+      <div class="chart-legend">${legendHTML}</div>
+    </div>
+    ${tableHTML}`;
+}
+
+// ═══ RENDER SUMMARY ═══
+function renderSummary(){
+  const el=document.getElementById('summaryContent');
+  if(!cars.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">🏆</div><div class="empty-title">Pridaj autá</div><div class="empty-sub">Zhrnutie sa zobrazí keď máš aspoň jedno auto</div></div>`;return;}
+  const scored=cars.map(c=>({car:c,...scoreCar(c,cars)})).sort((a,b)=>b.total-a.total);
+  const pC=['first','second','third'],pE=['🥇','🥈','🥉'];
+  const podium=scored.slice(0,3).map((it,i)=>{
+    const bc=it.total>=70?'var(--green)':it.total>=50?'var(--accent)':'var(--red)';
+    const c5=calc5y(it.car);
+    return `<div class="podium-item ${pC[i]}" onclick="showDetailView(${it.car.id})"><div class="podium-rank">${pE[i]}</div><div class="podium-name">${it.car.make} ${it.car.model}</div><div class="podium-sub">${it.car.year||''}</div><div class="podium-score" style="color:${bc}">${it.total}</div>${c5.total?`<div style="font-size:11px;color:var(--text3)">5r: €${c5.total.toLocaleString()}</div>`:''}</div>`;
+  }).join('');
+
+  const rows=scored.map((it,i)=>{
+    const c5=calc5y(it.car);
+    const bc=it.total>=70?'var(--green)':it.total>=50?'var(--accent)':'var(--red)';
+    const ci=cars.indexOf(it.car);
+    return `<tr onclick="showDetailView(${it.car.id})" style="cursor:pointer">
+      <td style="padding:12px 16px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:8px">
+          ${i<3?`<span class="rank-badge rank-${i+1}">${i+1}</span>`:`<span style="width:24px;text-align:center;color:var(--text3)">${i+1}</span>`}
+          <div style="width:10px;height:10px;border-radius:50%;background:${CAR_COLORS[ci%CAR_COLORS.length]};flex-shrink:0"></div>
+          <div><div style="font-weight:600;font-size:14px">${it.car.make} ${it.car.model}</div><div style="font-size:12px;color:var(--text2)">${it.car.year||''} ${it.car.engine||''}</div></div>
+        </div>
+      </td>
+      <td style="padding:12px 16px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:13px">${it.car.price?'€'+it.car.price.toLocaleString():'—'}</td>
+      <td style="padding:12px 16px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:13px">${c5.total?'€'+c5.total.toLocaleString():'—'}</td>
+      <td style="padding:12px 16px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:13px">${it.car.consumption?it.car.consumption+'l':'—'}</td>
+      <td style="padding:12px 16px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:8px"><span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:${bc}">${it.total}</span><div style="flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;min-width:40px"><div style="height:100%;width:${it.total}%;background:${bc};border-radius:2px"></div></div></div>
+      </td>
+      <td style="padding:12px 16px;border-bottom:1px solid var(--border)"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showDetailView(${it.car.id})">Detail →</button></td>
+    </tr>`;
+  }).join('');
+
+  const w=scored[0];const wc5=calc5y(w.car);
+  el.innerHTML=`
+    <div class="ai-reason"><strong>💡 Odporúčanie:</strong> Najlepšie vychádza <strong>${w.car.make} ${w.car.model}</strong> so skóre <strong>${w.total}/100</strong>${wc5.total?` · náklady 5r: <strong>€${wc5.total.toLocaleString()}</strong>`:''}. ${scored.length>1?`Druhé: <strong>${scored[1].car.make} ${scored[1].car.model}</strong> (${scored[1].total}/100).`:''}</div>
+    <div class="summary-podium">${podium}</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>
+          <th style="padding:10px 16px;background:var(--bg3);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;text-align:left;border-bottom:1px solid var(--border)">Auto</th>
+          <th style="padding:10px 16px;background:var(--bg3);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">Cena</th>
+          <th style="padding:10px 16px;background:var(--bg3);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">Náklady 5r</th>
+          <th style="padding:10px 16px;background:var(--bg3);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">Spotreba</th>
+          <th style="padding:10px 16px;background:var(--bg3);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border)">Skóre</th>
+          <th style="padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border)"></th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
 // ═══ RENDER DETAIL ═══
 function renderDetail(carId){
   const car=cars.find(c=>c.id===carId);if(!car)return;
-  const {total,breakdown}=scoreCar(car,cars);
+  const{total,breakdown}=scoreCar(car,cars);
   const bc=total>=70?'var(--green)':total>=50?'var(--accent)':'var(--red)';
   const eq=car.equip||{};
   const allEq=[{id:'awd',label:'AWD / 4x4'},...EQUIPMENT];
   const hasEq=allEq.filter(e=>eq[e.id]);
-  const {items,total:cost5y}=calc5y(car);
-  const hasLeasing=car.leasingFirst||car.leasingMonthly||car.leasingLast;
+  const{items,total:cost5y,fuel5y,tyres5y,ins5y,service5y,depreciation,leasingTotal}=calc5y(car);
+  const ci=cars.indexOf(car);
+  const color=CAR_COLORS[ci%CAR_COLORS.length];
 
   const bHTML=Object.entries(breakdown).map(([k,v])=>{
     const c=v>=70?'var(--green)':v>=50?'var(--accent)':'var(--red)';
     return `<div class="breakdown-item"><div class="breakdown-name">${k}</div><div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:${v}%;background:${c}"></div></div><div class="breakdown-score" style="color:${c}">${v}/100</div><div class="breakdown-weight">${weights[k]||0}%</div></div>`;
   }).join('');
 
+  // AI eval button
+  const aiEvalSection=groqKey?`<div style="margin-bottom:20px">
+    <button class="btn btn-secondary" id="btnAIEval" onclick="loadAIEval(${carId})">🤖 Načítať AI hodnotenie parametrov</button>
+    <div id="aiEvalContent" style="margin-top:12px"></div>
+  </div>`:'';
+
   document.getElementById('detailContent').innerHTML=`
     <div class="detail-header">
       <div>
-        <div class="detail-car-name">${car.make} ${car.model}</div>
+        <div class="detail-car-name" style="color:${color}">${car.make} ${car.model}</div>
         <div class="detail-car-sub">${[car.year,car.engine,FL[car.fuel],car.seats?car.seats+' miest':null,eq.awd?'AWD':null].filter(Boolean).join(' · ')}</div>
         ${car.notes?`<div style="font-size:13px;color:var(--text3);margin-top:6px">${car.notes}</div>`:''}
       </div>
       <div class="detail-score-big"><div class="detail-score-number" style="color:${bc}">${total}</div><div class="detail-score-label">Celkové skóre</div></div>
     </div>
 
-    <!-- 5Y COST BIG -->
+    ${aiEvalSection}
+
     <div class="cost5y-big">
       <div class="cost5y-big-title">💰 Celkové náklady za 5 rokov</div>
       <div class="cost5y-big-grid">
-        ${items.map(i=>`<div class="cost5y-big-item"><div class="cost5y-big-label">${i.label}</div><div class="cost5y-big-value">${i.value!=null&&i.value>0?'€'+i.value.toLocaleString():'—'}</div></div>`).join('')}
+        ${items.map(i=>`<div class="cost5y-big-item"><div class="cost5y-big-label">${i.label}</div><div class="cost5y-big-value">${i.value&&i.value>0?'€'+i.value.toLocaleString():'—'}</div></div>`).join('')}
       </div>
-      <div class="cost5y-big-total">
-        <span style="font-weight:600">Celkom za 5 rokov</span>
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)">${cost5y?'€'+cost5y.toLocaleString():'—'}</span>
-      </div>
-      ${car.mileage?`<div style="padding:8px 16px;font-size:12px;color:var(--text3)">Ročný nájazd: ${car.mileage.toLocaleString()} km · Cena paliva: €${car.fuelPrice||'—'}/l · Pneumatiky každých 40 000 km</div>`:''}
+      <div class="cost5y-big-total"><span style="font-weight:600">Celkom za 5 rokov</span><span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)">${cost5y?'€'+cost5y.toLocaleString():'—'}</span></div>
     </div>
 
     <div class="score-breakdown">
-      <div class="breakdown-header">📊 Rozklad skóre <span style="font-size:13px;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--text2)">(parameter · skóre · váha)</span></div>
+      <div class="breakdown-header">📊 Rozklad skóre</div>
       ${bHTML}
     </div>
 
@@ -1054,148 +1303,91 @@ function renderDetail(carId){
       <div class="detail-section">
         <div class="detail-section-header">💳 Kúpa & Hodnota</div>
         <div class="detail-row"><span class="detail-row-label">Kúpna cena</span><span class="detail-row-value">€${car.price?.toLocaleString()}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Hodnota po 5 rokoch</span><span class="detail-row-value">${car.value5y?'€'+car.value5y.toLocaleString():'—'}</span></div>
-        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Odpis za 5 rokov</strong></span><span class="detail-row-value"><strong>${car.value5y?'€'+(car.price-car.value5y).toLocaleString():'—'}</strong></span></div>
+        <div class="detail-row"><span class="detail-row-label">Hodnota po 5r</span><span class="detail-row-value">${car.value5y?'€'+car.value5y.toLocaleString():'—'}</span></div>
+        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Odpis 5r</strong></span><span class="detail-row-value"><strong>${depreciation?'€'+depreciation.toLocaleString():'—'}</strong></span></div>
+        <div class="detail-row"><span class="detail-row-label">Leasing/mesiac</span><span class="detail-row-value">${car.leasingMonthly?'€'+car.leasingMonthly:'Hotovosť'}</span></div>
       </div>
-
-      ${hasLeasing?`<div class="detail-section">
-        <div class="detail-section-header">📄 Leasing</div>
-        <div class="detail-row"><span class="detail-row-label">Prvá splátka</span><span class="detail-row-value">${car.leasingFirst?'€'+car.leasingFirst.toLocaleString():'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Mesačná splátka</span><span class="detail-row-value">${car.leasingMonthly?'€'+car.leasingMonthly+'/mes':'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Posledná splátka</span><span class="detail-row-value">${car.leasingLast?'€'+car.leasingLast.toLocaleString():'—'}</span></div>
-        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Leasing spolu 5r</strong></span><span class="detail-row-value"><strong>€${((car.leasingFirst||0)+(car.leasingMonthly||0)*60+(car.leasingLast||0)).toLocaleString()}</strong></span></div>
-      </div>`:''}
-
       <div class="detail-section">
         <div class="detail-section-header">🛡️ Poistenie</div>
         <div class="detail-row"><span class="detail-row-label">KFZ (mesačne)</span><span class="detail-row-value">${car.kfz?'€'+car.kfz+'/mes':'—'}</span></div>
         <div class="detail-row"><span class="detail-row-label">Kasko (mesačne)</span><span class="detail-row-value">${car.kasko?'€'+car.kasko+'/mes':'—'}</span></div>
-        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Poistenie 5r</strong></span><span class="detail-row-value"><strong>${car.kfz||car.kasko?'€'+Math.round(((car.kfz||0)+(car.kasko||0))*60).toLocaleString():'—'}</strong></span></div>
+        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Poistenie 5r</strong></span><span class="detail-row-value"><strong>${ins5y?'€'+ins5y.toLocaleString():'—'}</strong></span></div>
       </div>
-
       <div class="detail-section">
-        <div class="detail-section-header">⛽ Palivo & Nájazd</div>
-        <div class="detail-row"><span class="detail-row-label">Ročný nájazd</span><span class="detail-row-value">${car.mileage?car.mileage.toLocaleString()+' km':'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Spotreba</span><span class="detail-row-value">${car.consumption?car.consumption+' l/100km':'—'}</span></div>
+        <div class="detail-section-header">⛽ Palivo</div>
+        <div class="detail-row"><span class="detail-row-label">Nájazd/rok</span><span class="detail-row-value">${car.mileage?car.mileage.toLocaleString()+' km':'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Spotreba</span><span class="detail-row-value">${car.consumption?car.consumption+' l/100':'—'}</span></div>
         <div class="detail-row"><span class="detail-row-label">Cena paliva</span><span class="detail-row-value">${car.fuelPrice?'€'+car.fuelPrice+'/l':'—'}</span></div>
-        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Palivo ročne</strong></span><span class="detail-row-value"><strong>${car.consumption&&car.mileage&&car.fuelPrice?'€'+Math.round((car.consumption/100)*car.mileage*car.fuelPrice).toLocaleString():'—'}</strong></span></div>
+        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Palivo 5r</strong></span><span class="detail-row-value"><strong>${fuel5y?'€'+fuel5y.toLocaleString():'—'}</strong></span></div>
       </div>
-
       <div class="detail-section">
         <div class="detail-section-header">🛞 Pneumatiky</div>
-        <div class="detail-row"><span class="detail-row-label">Letné rozmer</span><span class="detail-row-value">${car.tyreSummer||'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Letné sada</span><span class="detail-row-value">${car.tyreSummerPrice?'€'+car.tyreSummerPrice:'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Zimné rozmer</span><span class="detail-row-value">${car.tyreWinter||'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Zimné sada</span><span class="detail-row-value">${car.tyreWinterPrice?'€'+car.tyreWinterPrice:'—'}</span></div>
-        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Pneumatiky 5r</strong></span><span class="detail-row-value"><strong>${car.tyreSummerPrice||car.tyreWinterPrice?'€'+(Math.max(1,Math.ceil((car.mileage||20000)*5/40000))*((car.tyreSummerPrice||0)+(car.tyreWinterPrice||0))).toLocaleString():'—'}</strong></span></div>
+        <div class="detail-row"><span class="detail-row-label">Letné</span><span class="detail-row-value">${car.tyreSummer||'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Cena letných</span><span class="detail-row-value">${car.tyreSummerPrice?'€'+car.tyreSummerPrice:'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Zimné</span><span class="detail-row-value">${car.tyreWinter||'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Cena zimných</span><span class="detail-row-value">${car.tyreWinterPrice?'€'+car.tyreWinterPrice:'—'}</span></div>
+        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Pneumatiky 5r</strong></span><span class="detail-row-value"><strong>${tyres5y?'€'+tyres5y.toLocaleString():'—'}</strong></span></div>
       </div>
-
       <div class="detail-section">
         <div class="detail-section-header">⚙️ Technické</div>
         <div class="detail-row"><span class="detail-row-label">Výkon</span><span class="detail-row-value">${car.power?car.power+' kW / '+(car.power*1.36|0)+' PS':'—'}</span></div>
         <div class="detail-row"><span class="detail-row-label">Palivo</span><span class="detail-row-value">${FL[car.fuel]||'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Pohon</span><span class="detail-row-value">${eq.awd?'🟣 AWD / 4x4':'FWD / RWD'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Záruka</span><span class="detail-row-value">${car.warranty?car.warranty+' roky':'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Servis / rok</span><span class="detail-row-value">${car.service?'€'+car.service:'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Pohon</span><span class="detail-row-value">${eq.awd?'🟣 AWD':'FWD/RWD'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Záruka</span><span class="detail-row-value">${car.warranty?car.warranty+' r':'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Servis/rok</span><span class="detail-row-value">${car.service?'€'+car.service:'—'}</span></div>
       </div>
-
       <div class="detail-section">
         <div class="detail-section-header">📐 Rozmery</div>
+        <div class="detail-row"><span class="detail-row-label">Dĺžka × Šírka × Výška</span><span class="detail-row-value">${[car.carLength,car.carWidth,car.carHeight].filter(Boolean).join('×')||'—'} cm</span></div>
         <div class="detail-row"><span class="detail-row-label">Objem kufra</span><span class="detail-row-value">${car.trunk?car.trunk+' l':'—'}</span></div>
         <div class="detail-row"><span class="detail-row-label">Počet miest</span><span class="detail-row-value">${car.seats||'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Rozmery</span><span class="detail-row-value">${car.dimensions||'—'}</span></div>
       </div>
-
       ${hasEq.length?`<div class="detail-section">
         <div class="detail-section-header">✅ Výbava</div>
         ${hasEq.map(e=>`<div class="detail-row"><span class="detail-row-label">${e.label.replace(/^\S+\s/,'')}</span><span style="color:var(--green)">✓</span></div>`).join('')}
       </div>`:''}
-
       <div class="detail-section">
         <div class="detail-section-header">⭐ Subjektívne</div>
         <div class="detail-row"><span class="detail-row-label">Pocit z auta</span><span class="detail-row-value">${car.feeling?car.feeling+'/10':'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Výbava / tech</span><span class="detail-row-value">${car.equipment?car.equipment+'/10':'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Výbava/tech</span><span class="detail-row-value">${car.equipment?car.equipment+'/10':'—'}</span></div>
       </div>
     </div>
-
     <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-edit" onclick="openModal(${car.id})">✏️ Editovať auto</button>
+      <button class="btn btn-edit" onclick="openModal(${car.id})">✏️ Editovať</button>
       <button class="btn btn-danger" onclick="if(confirm('Odstrániť?')){deleteCar(${car.id});showView('cars',document.querySelector('.tab-btn'))}">🗑 Odstrániť</button>
     </div>`;
 }
 
-// ═══ RENDER SUMMARY ═══
-function renderSummary(){
-  const el=document.getElementById('summaryContent');
-  if(!cars.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Najprv pridaj autá</div><div class="empty-sub">Zhrnutie sa zobrazí po pridaní aspoň jedného auta</div></div>`;return;}
-  const scored=cars.map(c=>({car:c,...scoreCar(c,cars)})).sort((a,b)=>b.total-a.total);
-  const pC=['first','second','third'],pE=['🥇','🥈','🥉'];
-
-  const podium=scored.slice(0,3).map((it,i)=>{
-    const bc=it.total>=70?'var(--green)':it.total>=50?'var(--accent)':'var(--red)';
-    const c5=calc5y(it.car);
-    return `<div class="podium-item ${pC[i]}" onclick="showDetailView(${it.car.id})"><div class="podium-rank">${pE[i]}</div><div class="podium-name">${it.car.make} ${it.car.model}</div><div class="podium-sub">${it.car.year||''} ${it.car.engine||''}</div><div class="podium-score" style="color:${bc}">${it.total}</div>${c5.total?`<div style="font-size:11px;color:var(--text3);margin-top:4px">5r: €${c5.total.toLocaleString()}</div>`:''}</div>`;
-  }).join('');
-
-  const rows=scored.map((it,i)=>{
-    const c5=calc5y(it.car);
-    const bc=it.total>=70?'var(--green)':it.total>=50?'var(--accent)':'var(--red)';
-    return `<div class="str" onclick="showDetailView(${it.car.id})">
-      <div style="display:flex;align-items:center;gap:8px">${i<3?`<span class="rank-badge rank-${i+1}">${i+1}</span>`:`<span style="width:24px;text-align:center;color:var(--text3);font-size:13px">${i+1}</span>`}<div><div class="summary-car-name">${it.car.make} ${it.car.model}</div><div class="summary-car-sub">${it.car.year||''} ${it.car.engine||''}${it.car.equip?.awd?' · AWD':''}</div></div></div>
-      <div class="summary-cell">${it.car.price?'€'+it.car.price.toLocaleString():'—'}</div>
-      <div class="summary-cell">${c5.total?'€'+c5.total.toLocaleString():'—'}</div>
-      <div class="summary-cell">${it.car.consumption?it.car.consumption+'l':'—'}</div>
-      <div style="display:flex;align-items:center;gap:8px"><span class="summary-score-num" style="color:${bc}">${it.total}</span><div style="flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;min-width:40px"><div style="height:100%;width:${it.total}%;background:${bc};border-radius:2px"></div></div></div>
-      <div><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showDetailView(${it.car.id})">Detail →</button></div>
-    </div>`;
-  }).join('');
-
-  const w=scored[0];
-  const wc5=calc5y(w.car);
-  el.innerHTML=`
-    <div class="ai-reason"><strong>💡 Odporúčanie:</strong> Na základe profilu najlepšie vychádza <strong>${w.car.make} ${w.car.model}</strong> so skóre <strong>${w.total}/100</strong>${wc5.total?` a celkovými nákladmi za 5 rokov <strong>€${wc5.total.toLocaleString()}</strong>`:''}. ${scored.length>1?`Druhé miesto: <strong>${scored[1].car.make} ${scored[1].car.model}</strong> (${scored[1].total}/100).`:''}</div>
-    <div class="summary-podium">${podium}</div>
-    <div class="summary-table">
-      <div class="sth"><div>Auto</div><div>Cena</div><div>Náklady 5r</div><div>Spotreba</div><div>Skóre</div><div></div></div>
-      ${rows}
-    </div>`;
+async function loadAIEval(carId){
+  const car=cars.find(c=>c.id===carId);if(!car)return;
+  const btn=document.getElementById('btnAIEval');
+  const content=document.getElementById('aiEvalContent');
+  btn.disabled=true;btn.textContent='🤖 Načítavam AI hodnotenie...';
+  const result=await getAIEval(car);
+  btn.style.display='none';
+  if(!result||!result.ratings){content.innerHTML=`<div style="color:var(--red);font-size:13px">⚠️ AI hodnotenie sa nepodarilo načítať</div>`;return;}
+  content.innerHTML=`<div class="score-breakdown">
+    <div class="breakdown-header">🤖 AI hodnotenie parametrov</div>
+    ${result.ratings.map(r=>`<div class="eval-item">
+      <div class="eval-dot ${r.rating}"></div>
+      <div class="eval-text"><strong>${r.param}</strong> (${r.value}) — ${r.note}</div>
+    </div>`).join('')}
+  </div>`;
 }
 
 // ═══ WEIGHTS ═══
 function renderWeightsPanel(){
   document.getElementById('weightsGrid').innerHTML=Object.entries(weights).map(([k,v])=>`
-    <div><div class="weight-item-header"><span class="weight-item-label">${k}</span><span class="weight-item-value" id="wv-${k.replace(/[^\w]/g,'_')}">${v}%</span></div>
-    <input type="range" class="weight-slider" min="0" max="30" value="${v}" oninput="updateWeight('${k}',this.value)"></div>`).join('');
+    <div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:13px">${k}</span><span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--accent)" id="wv-${k.replace(/[^\w]/g,'_')}">${v}%</span></div>
+    <input type="range" style="width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--bg4);outline:none" min="0" max="30" value="${v}" oninput="updateWeight('${k}',this.value)"></div>`).join('');
   updateWeightsTotal();
 }
-function updateWeight(k,v){
-  weights[k]=parseInt(v);
-  const el=document.getElementById('wv-'+k.replace(/[^\w]/g,'_'));
-  if(el)el.textContent=v+'%';
-  updateWeightsTotal();
-  localStorage.setItem('autoscore_weights',JSON.stringify(weights));
-  renderCarsGrid();
-}
-function updateWeightsTotal(){
-  const t=Object.values(weights).reduce((a,b)=>a+b,0);
-  const el=document.getElementById('weightsTotalDisplay');
-  el.textContent=`Súčet váh: ${t}% ${t!==100?'⚠️ (ideálne = 100%)':'✓'}`;
-  el.style.color=t===100?'var(--green)':'var(--accent)';
-}
-function resetWeights(){
-  weights={...DEFAULT_WEIGHTS};
-  localStorage.setItem('autoscore_weights',JSON.stringify(weights));
-  renderWeightsPanel();renderCarsGrid();
-  showToast('Váhy resetované ✓','success');
-}
+function updateWeight(k,v){weights[k]=parseInt(v);const el=document.getElementById('wv-'+k.replace(/[^\w]/g,'_'));if(el)el.textContent=v+'%';updateWeightsTotal();localStorage.setItem('autoscore_weights',JSON.stringify(weights));renderCarsGrid();}
+function updateWeightsTotal(){const t=Object.values(weights).reduce((a,b)=>a+b,0);const el=document.getElementById('weightsTotalDisplay');el.textContent=`Súčet váh: ${t}% ${t!==100?'⚠️ (ideálne = 100%)':'✓'}`;el.style.color=t===100?'var(--green)':'var(--accent)';}
+function resetWeights(){weights={...DEFAULT_WEIGHTS};localStorage.setItem('autoscore_weights',JSON.stringify(weights));renderWeightsPanel();renderCarsGrid();showToast('Váhy resetované ✓','success');}
 
 // ═══ TOAST ═══
-function showToast(msg,type='success'){
-  const el=document.getElementById('toast');
-  el.textContent=(type==='success'?'✓ ':'✕ ')+msg;
-  el.className=`toast ${type} show`;
-  setTimeout(()=>el.classList.remove('show'),3500);
-}
+function showToast(msg,type='success'){const el=document.getElementById('toast');el.textContent=(type==='success'?'✓ ':'✕ ')+msg;el.className=`toast ${type} show`;setTimeout(()=>el.classList.remove('show'),3500);}
 </script>
 </body>
 </html>
