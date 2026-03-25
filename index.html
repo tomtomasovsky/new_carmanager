@@ -3,204 +3,237 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoScore v1.2 — Porovnávač áut</title>
+<title>AutoScore v1.3</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f; --bg2: #111118; --bg3: #18181f; --bg4: #22222c;
-    --border: #2a2a38; --border2: #353545;
-    --text: #e8e8f0; --text2: #9090a8; --text3: #5a5a70;
-    --accent: #f0a500; --green: #22c55e; --red: #ef4444; --blue: #3b82f6;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+:root {
+  --bg:#0a0a0f;--bg2:#111118;--bg3:#18181f;--bg4:#22222c;
+  --border:#2a2a38;--border2:#353545;
+  --text:#e8e8f0;--text2:#9090a8;--text3:#5a5a70;
+  --accent:#f0a500;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--purple:#a855f7;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
 
-  header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; color: var(--accent); }
-  .logo span { color: var(--text); }
-  .version-badge { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); background: var(--bg4); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; margin-left: 10px; letter-spacing: 1px; }
+header{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--accent);}
+.logo span{color:var(--text);}
+.version-badge{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 7px;margin-left:10px;letter-spacing:1px;}
+.sync-indicator{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);padding:4px 10px;border-radius:6px;border:1px solid var(--border);}
+.sync-indicator.synced{color:var(--green);border-color:rgba(34,197,94,0.3);}
+.sync-indicator.syncing{color:var(--accent);border-color:rgba(240,165,0,0.3);}
+.sync-indicator.error{color:var(--red);border-color:rgba(239,68,68,0.3);}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
 
-  .nav-tabs { display: flex; gap: 4px; padding: 16px 24px 0; border-bottom: 1px solid var(--border); background: var(--bg2); }
-  .tab-btn { padding: 10px 20px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; margin-bottom: -1px; }
-  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .tab-btn:hover:not(.active) { color: var(--text); }
+.nav-tabs{display:flex;gap:4px;padding:16px 24px 0;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;}
+.tab-btn{padding:10px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;margin-bottom:-1px;white-space:nowrap;}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab-btn:hover:not(.active){color:var(--text);}
 
-  main { padding: 24px; max-width: 1400px; margin: 0 auto; }
-  .view { display: none; } .view.active { display: block; }
+main{padding:24px;max-width:1400px;margin:0 auto;}
+.view{display:none;}.view.active{display:block;}
 
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 8px; border: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-  .btn-primary { background: var(--accent); color: #000; } .btn-primary:hover { background: #e09800; }
-  .btn-secondary { background: var(--bg4); color: var(--text); border: 1px solid var(--border2); } .btn-secondary:hover { background: var(--border); }
-  .btn-ghost { background: none; color: var(--text2); border: 1px solid var(--border); } .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
-  .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); } .btn-danger:hover { background: rgba(239,68,68,0.25); }
-  .btn-edit { background: rgba(59,130,246,0.15); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); } .btn-edit:hover { background: rgba(59,130,246,0.25); }
-  .btn-sm { padding: 6px 12px; font-size: 13px; } .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.btn-primary{background:var(--accent);color:#000;}.btn-primary:hover{background:#e09800;}
+.btn-secondary{background:var(--bg4);color:var(--text);border:1px solid var(--border2);}.btn-secondary:hover{background:var(--border);}
+.btn-ghost{background:none;color:var(--text2);border:1px solid var(--border);}.btn-ghost:hover{color:var(--text);border-color:var(--border2);}
+.btn-danger{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}.btn-danger:hover{background:rgba(239,68,68,0.25);}
+.btn-edit{background:rgba(59,130,246,0.15);color:var(--blue);border:1px solid rgba(59,130,246,0.3);}.btn-edit:hover{background:rgba(59,130,246,0.25);}
+.btn-green{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3);}.btn-green:hover{background:rgba(34,197,94,0.25);}
+.btn-sm{padding:6px 12px;font-size:13px;}.btn:disabled{opacity:0.5;cursor:not-allowed;}
 
-  /* API KEY BANNER */
-  .api-banner { background: rgba(240,165,0,0.08); border: 1px solid rgba(240,165,0,0.25); border-radius: 10px; padding: 14px 18px; font-size: 13px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-  .api-banner-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
-  .api-banner-body { flex: 1; min-width: 220px; }
-  .api-banner-title { font-weight: 600; color: var(--accent); margin-bottom: 3px; font-size: 14px; }
-  .api-banner-sub { color: var(--text2); line-height: 1.5; }
-  .api-banner-sub a { color: var(--accent); }
-  .api-banner-input-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
-  .api-key-input { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text); font-family: 'DM Mono', monospace; font-size: 12px; width: 260px; }
-  .api-key-input:focus { outline: none; border-color: var(--accent); }
-  .api-key-saved { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25); border-radius: 8px; font-size: 13px; color: var(--green); }
+/* CARDS */
+.cars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:20px;}
+.car-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+.car-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.car-card-header{padding:16px;background:var(--bg3);display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer;}
+.car-card-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;line-height:1.1;}
+.car-card-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+.score-badge{display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;font-family:'Bebas Neue',sans-serif;font-size:24px;line-height:1;flex-shrink:0;}
+.score-badge .score-label{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:500;letter-spacing:1px;}
+.score-high{background:rgba(34,197,94,0.15);color:var(--green);border:2px solid rgba(34,197,94,0.4);}
+.score-mid{background:rgba(240,165,0,0.15);color:var(--accent);border:2px solid rgba(240,165,0,0.4);}
+.score-low{background:rgba(239,68,68,0.15);color:var(--red);border:2px solid rgba(239,68,68,0.3);}
+.car-card-body{padding:14px 16px;cursor:pointer;}
+.car-mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.mini-stat-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;}
+.mini-stat-value{font-size:14px;font-weight:500;margin-top:1px;}
+.score-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;margin-bottom:12px;}
+.score-bar-fill{height:100%;border-radius:2px;}
+.car-card-actions{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);}
+.equip-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.equip-tag{font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(59,130,246,0.12);color:#60a5fa;border:1px solid rgba(59,130,246,0.2);}
+.equip-tag.awd{background:rgba(168,85,247,0.12);color:#c084fc;border-color:rgba(168,85,247,0.2);}
 
-  /* CARS GRID */
-  .cars-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 20px; }
-  .car-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.2s, transform 0.2s; }
-  .car-card:hover { border-color: var(--border2); transform: translateY(-2px); }
-  .car-card-header { padding: 16px; background: var(--bg3); display: flex; justify-content: space-between; align-items: flex-start; cursor: pointer; }
-  .car-card-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; line-height: 1.1; }
-  .car-card-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .score-badge { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 50%; font-family: 'Bebas Neue', sans-serif; font-size: 24px; line-height: 1; flex-shrink: 0; }
-  .score-badge .score-label { font-family: 'DM Sans', sans-serif; font-size: 9px; font-weight: 500; letter-spacing: 1px; }
-  .score-high { background: rgba(34,197,94,0.15); color: var(--green); border: 2px solid rgba(34,197,94,0.4); }
-  .score-mid { background: rgba(240,165,0,0.15); color: var(--accent); border: 2px solid rgba(240,165,0,0.4); }
-  .score-low { background: rgba(239,68,68,0.15); color: var(--red); border: 2px solid rgba(239,68,68,0.3); }
-  .car-card-body { padding: 14px 16px; cursor: pointer; }
-  .car-mini-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-  .mini-stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
-  .mini-stat-value { font-size: 14px; font-weight: 500; margin-top: 1px; }
-  .score-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; margin-bottom: 12px; }
-  .score-bar-fill { height: 100%; border-radius: 2px; }
-  .car-card-actions { display: flex; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border); }
-  .equip-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-  .equip-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
-  .equip-tag.awd { background: rgba(168,85,247,0.12); color: #c084fc; border-color: rgba(168,85,247,0.2); }
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:620px;max-height:93vh;overflow-y:auto;transform:translateY(20px);transition:transform 0.2s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg2);z-index:1;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;}
+.modal-close{background:none;border:none;color:var(--text2);font-size:24px;cursor:pointer;padding:4px;}.modal-close:hover{color:var(--text);}
+.modal-body{padding:24px;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--bg2);}
 
-  /* MODAL */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: 16px; width: 100%; max-width: 580px; max-height: 92vh; overflow-y: auto; transform: translateY(20px); transition: transform 0.2s; }
-  .modal-overlay.open .modal { transform: translateY(0); }
-  .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg2); z-index: 1; }
-  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; }
-  .modal-close { background: none; border: none; color: var(--text2); font-size: 24px; cursor: pointer; padding: 4px; } .modal-close:hover { color: var(--text); }
-  .modal-body { padding: 24px; }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; position: sticky; bottom: 0; background: var(--bg2); }
+/* FORM */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.form-input,.form-select{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:border-color 0.2s;appearance:none;}
+.form-input:focus,.form-select:focus{outline:none;border-color:var(--accent);}
+.form-input::placeholder{color:var(--text3);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.form-hint{font-size:11px;color:var(--text3);margin-top:4px;}
+.section-divider{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin:18px 0 12px;display:flex;align-items:center;gap:10px;}
+.section-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
-  /* FORM */
-  .form-group { margin-bottom: 14px; }
-  .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-  .form-input, .form-select { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; transition: border-color 0.2s; appearance: none; }
-  .form-input:focus, .form-select:focus { outline: none; border-color: var(--accent); }
-  .form-input::placeholder { color: var(--text3); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .form-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
-  .section-divider { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin: 18px 0 12px; display: flex; align-items: center; gap: 10px; }
-  .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* CHECKBOXES */
+.checkbox-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:7px;}
+.checkbox-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color 0.15s;user-select:none;font-size:13px;}
+.checkbox-item:hover{border-color:var(--border2);}
+.checkbox-item input[type=checkbox]{display:none;}
+.check-box{width:16px;height:16px;border-radius:4px;border:1px solid var(--border2);background:var(--bg4);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all 0.15s;color:transparent;}
+.checkbox-item.checked{border-color:var(--accent);background:rgba(240,165,0,0.06);}
+.checkbox-item.checked .check-box{background:var(--accent);border-color:var(--accent);color:#000;}
+.checkbox-item.awd-item.checked{border-color:#c084fc;background:rgba(168,85,247,0.07);}
+.checkbox-item.awd-item.checked .check-box{background:#a855f7;border-color:#a855f7;color:#fff;}
 
-  /* CHECKBOXES */
-  .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 7px; }
-  .checkbox-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: border-color 0.15s; user-select: none; font-size: 13px; }
-  .checkbox-item:hover { border-color: var(--border2); }
-  .checkbox-item input[type=checkbox] { display: none; }
-  .check-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--border2); background: var(--bg4); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all 0.15s; color: transparent; }
-  .checkbox-item.checked { border-color: var(--accent); background: rgba(240,165,0,0.06); }
-  .checkbox-item.checked .check-box { background: var(--accent); border-color: var(--accent); color: #000; }
-  .checkbox-item.awd-item.checked { border-color: #c084fc; background: rgba(168,85,247,0.07); }
-  .checkbox-item.awd-item.checked .check-box { background: #a855f7; border-color: #a855f7; color: #fff; }
+.ai-loading{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(240,165,0,0.08);border:1px solid rgba(240,165,0,0.2);border-radius:8px;margin-bottom:16px;font-size:13px;color:var(--accent);}
+.spinner{width:16px;height:16px;border:2px solid rgba(240,165,0,0.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-  /* AI LOADING */
-  .ai-loading { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: rgba(240,165,0,0.08); border: 1px solid rgba(240,165,0,0.2); border-radius: 8px; margin-bottom: 16px; font-size: 13px; color: var(--accent); }
-  .spinner { width: 16px; height: 16px; border: 2px solid rgba(240,165,0,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* 5Y COST BOX */
+.cost5y-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:16px;}
+.cost5y-header{padding:10px 16px;background:var(--bg4);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);}
+.cost5y-rows{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.cost5y-item{padding:10px 16px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
+.cost5y-item:nth-child(even){border-right:none;}
+.cost5y-label{font-size:11px;color:var(--text3);}
+.cost5y-value{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;margin-top:2px;}
+.cost5y-total{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;background:rgba(240,165,0,0.06);}
+.cost5y-total-label{font-weight:600;font-size:14px;}
+.cost5y-total-value{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);}
 
-  /* DETAIL */
-  .detail-back { display: inline-flex; align-items: center; gap: 8px; color: var(--text2); font-size: 14px; cursor: pointer; margin-bottom: 20px; transition: color 0.2s; }
-  .detail-back:hover { color: var(--text); }
-  .detail-header { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 16px; }
-  .detail-car-name { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 2px; line-height: 1; }
-  .detail-car-sub { color: var(--text2); margin-top: 4px; font-size: 15px; }
-  .detail-score-big { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .detail-score-number { font-family: 'Bebas Neue', sans-serif; font-size: 72px; line-height: 1; }
-  .detail-score-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
-  .detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px; }
-  .detail-section { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .detail-section-header { padding: 12px 16px; background: var(--bg3); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); border-bottom: 1px solid var(--border); }
-  .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); gap: 12px; }
-  .detail-row:last-child { border-bottom: none; }
-  .detail-row-label { font-size: 13px; color: var(--text2); flex: 1; }
-  .detail-row-value { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; text-align: right; }
+/* DETAIL */
+.detail-back{display:inline-flex;align-items:center;gap:8px;color:var(--text2);font-size:14px;cursor:pointer;margin-bottom:20px;transition:color 0.2s;}
+.detail-back:hover{color:var(--text);}
+.detail-header{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:16px;}
+.detail-car-name{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:2px;line-height:1;}
+.detail-car-sub{color:var(--text2);margin-top:4px;font-size:15px;}
+.detail-score-big{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.detail-score-number{font-family:'Bebas Neue',sans-serif;font-size:72px;line-height:1;}
+.detail-score-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:20px;}
+.detail-section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.detail-section-header{padding:12px 16px;background:var(--bg3);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);border-bottom:1px solid var(--border);}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:12px;}
+.detail-row:last-child{border-bottom:none;}
+.detail-row-label{font-size:13px;color:var(--text2);flex:1;}
+.detail-row-value{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;text-align:right;}
+.detail-highlight{background:rgba(240,165,0,0.05);}
 
-  .score-breakdown { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
-  .breakdown-header { padding: 14px 20px; background: var(--bg3); font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
-  .breakdown-item { padding: 11px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
-  .breakdown-item:last-child { border-bottom: none; }
-  .breakdown-name { font-size: 13px; flex: 1; }
-  .breakdown-bar-wrap { flex: 2; height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
-  .breakdown-bar { height: 100%; border-radius: 3px; }
-  .breakdown-score { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; width: 60px; text-align: right; }
-  .breakdown-weight { font-size: 11px; color: var(--text3); width: 40px; text-align: right; }
+/* BIG 5Y SUMMARY */
+.cost5y-big{background:var(--bg2);border:1px solid var(--accent);border-radius:12px;padding:20px;margin-bottom:20px;}
+.cost5y-big-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:16px;color:var(--accent);}
+.cost5y-big-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:16px;}
+.cost5y-big-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;}
+.cost5y-big-label{font-size:11px;color:var(--text3);margin-bottom:4px;}
+.cost5y-big-value{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;}
+.cost5y-big-total{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;}
 
-  /* SUMMARY */
-  .summary-podium { display: flex; gap: 12px; margin-bottom: 24px; align-items: flex-end; justify-content: center; flex-wrap: wrap; }
-  .podium-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; min-width: 160px; cursor: pointer; transition: transform 0.2s; }
-  .podium-item:hover { transform: translateY(-4px); }
-  .podium-item.first { border-color: var(--accent); background: rgba(240,165,0,0.07); order: 2; padding-top: 24px; }
-  .podium-item.second { order: 1; } .podium-item.third { order: 3; }
-  .podium-rank { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--text3); }
-  .podium-item.first .podium-rank { font-size: 56px; color: var(--accent); }
-  .podium-name { font-weight: 600; font-size: 13px; margin-top: 4px; }
-  .podium-sub { font-size: 11px; color: var(--text2); }
-  .podium-score { font-family: 'Bebas Neue', sans-serif; font-size: 32px; margin-top: 8px; }
-  .podium-item.first .podium-score { font-size: 40px; color: var(--accent); }
-  .summary-table { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .summary-table-header { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 100px; padding: 10px 16px; background: var(--bg3); font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); gap: 8px; }
-  .summary-table-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 100px; padding: 12px 16px; border-bottom: 1px solid var(--border); align-items: center; gap: 8px; cursor: pointer; transition: background 0.15s; }
-  .summary-table-row:last-child { border-bottom: none; }
-  .summary-table-row:hover { background: var(--bg3); }
-  .summary-car-name { font-weight: 600; font-size: 14px; }
-  .summary-car-sub { font-size: 12px; color: var(--text2); }
-  .summary-cell { font-family: 'DM Mono', monospace; font-size: 13px; }
-  .summary-score-num { font-family: 'Bebas Neue', sans-serif; font-size: 22px; }
-  .rank-badge { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-  .rank-1 { background: rgba(240,165,0,0.2); color: var(--accent); }
-  .rank-2 { background: rgba(148,163,184,0.2); color: #94a3b8; }
-  .rank-3 { background: rgba(180,120,60,0.2); color: #b4783c; }
+/* SCORE BREAKDOWN */
+.score-breakdown{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+.breakdown-header{padding:14px 20px;background:var(--bg3);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;border-bottom:1px solid var(--border);}
+.breakdown-item{padding:11px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.breakdown-item:last-child{border-bottom:none;}
+.breakdown-name{font-size:13px;flex:1;}
+.breakdown-bar-wrap{flex:2;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+.breakdown-bar{height:100%;border-radius:3px;}
+.breakdown-score{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;width:60px;text-align:right;}
+.breakdown-weight{font-size:11px;color:var(--text3);width:40px;text-align:right;}
 
-  /* WEIGHTS */
-  .weights-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-  .weights-title { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; margin-bottom: 4px; }
-  .weights-sub { font-size: 12px; color: var(--text2); margin-bottom: 16px; }
-  .weights-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-  .weight-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .weight-item-label { font-size: 13px; }
-  .weight-item-value { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent); }
-  .weight-slider { width: 100%; -webkit-appearance: none; height: 4px; border-radius: 2px; background: var(--bg4); outline: none; }
-  .weight-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+/* SUMMARY */
+.summary-podium{display:flex;gap:12px;margin-bottom:24px;align-items:flex-end;justify-content:center;flex-wrap:wrap;}
+.podium-item{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;min-width:160px;cursor:pointer;transition:transform 0.2s;}
+.podium-item:hover{transform:translateY(-4px);}
+.podium-item.first{border-color:var(--accent);background:rgba(240,165,0,0.07);order:2;padding-top:24px;}
+.podium-item.second{order:1;}.podium-item.third{order:3;}
+.podium-rank{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--text3);}
+.podium-item.first .podium-rank{font-size:56px;color:var(--accent);}
+.podium-name{font-weight:600;font-size:13px;margin-top:4px;}
+.podium-sub{font-size:11px;color:var(--text2);}
+.podium-score{font-family:'Bebas Neue',sans-serif;font-size:32px;margin-top:8px;}
+.podium-item.first .podium-score{font-size:40px;color:var(--accent);}
+.summary-table{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.sth{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px;padding:10px 16px;background:var(--bg3);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);gap:8px;}
+.str{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px;padding:12px 16px;border-bottom:1px solid var(--border);align-items:center;gap:8px;cursor:pointer;transition:background 0.15s;}
+.str:last-child{border-bottom:none;}.str:hover{background:var(--bg3);}
+.summary-car-name{font-weight:600;font-size:14px;}.summary-car-sub{font-size:12px;color:var(--text2);}
+.summary-cell{font-family:'DM Mono',monospace;font-size:13px;}
+.summary-score-num{font-family:'Bebas Neue',sans-serif;font-size:22px;}
+.rank-badge{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.rank-1{background:rgba(240,165,0,0.2);color:var(--accent);}
+.rank-2{background:rgba(148,163,184,0.2);color:#94a3b8;}
+.rank-3{background:rgba(180,120,60,0.2);color:#b4783c;}
 
-  .ai-reason { background: rgba(240,165,0,0.06); border: 1px solid rgba(240,165,0,0.2); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: var(--text2); }
-  .ai-reason strong { color: var(--accent); }
-  .empty-state { text-align: center; padding: 80px 20px; }
-  .empty-icon { font-size: 48px; margin-bottom: 16px; }
-  .empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; margin-bottom: 8px; }
-  .empty-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; }
-  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
-  .tag-petrol { background: rgba(239,68,68,0.15); color: #f87171; }
-  .tag-diesel { background: rgba(59,130,246,0.15); color: #60a5fa; }
-  .tag-hybrid { background: rgba(34,197,94,0.15); color: #4ade80; }
-  .tag-electric { background: rgba(168,85,247,0.15); color: #c084fc; }
-  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 16px; font-size: 14px; display: flex; align-items: center; gap: 10px; z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; max-width: 340px; }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { border-color: rgba(34,197,94,0.4); }
-  .toast.error { border-color: rgba(239,68,68,0.4); }
-  .page-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
-  .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; margin-bottom: 4px; }
-  .page-sub { font-size: 13px; color: var(--text2); }
+/* WEIGHTS */
+.weights-panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;}
+.weights-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:4px;}
+.weights-sub{font-size:12px;color:var(--text2);margin-bottom:16px;}
+.weights-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.weight-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.weight-item-label{font-size:13px;}.weight-item-value{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);}
+.weight-slider{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--bg4);outline:none;}
+.weight-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;}
 
-  @media (max-width: 600px) {
-    main { padding: 16px; }
-    .form-row { grid-template-columns: 1fr; }
-    .summary-table-header, .summary-table-row { grid-template-columns: 2fr 1fr 100px; }
-    .summary-table-header > *:nth-child(n+3):not(:last-child), .summary-table-row > *:nth-child(n+3):not(:last-child) { display: none; }
-    .detail-car-name { font-size: 28px; }
-    .checkbox-grid { grid-template-columns: 1fr 1fr; }
-    .api-key-input { width: 100%; }
-  }
+/* SETTINGS */
+.settings-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+.settings-card-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:4px;}
+.settings-card-sub{font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6;}
+.settings-card-sub a{color:var(--accent);}
+.api-key-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+.api-key-input{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;flex:1;min-width:200px;}
+.api-key-input:focus{outline:none;border-color:var(--accent);}
+.key-saved{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:6px;font-size:12px;color:var(--green);font-family:'DM Mono',monospace;}
+
+/* STEP GUIDE */
+.step-guide{counter-reset:step;}
+.step{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
+.step-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#000;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-text{font-size:13px;color:var(--text2);line-height:1.6;}
+.step-text strong{color:var(--text);}
+.step-text code{font-family:'DM Mono',monospace;font-size:11px;background:var(--bg4);padding:1px 5px;border-radius:3px;color:var(--accent);}
+
+.ai-reason{background:rgba(240,165,0,0.06);border:1px solid rgba(240,165,0,0.2);border-radius:12px;padding:16px 20px;margin-bottom:20px;font-size:14px;line-height:1.6;color:var(--text2);}
+.ai-reason strong{color:var(--accent);}
+.empty-state{text-align:center;padding:80px 20px;}
+.empty-icon{font-size:48px;margin-bottom:16px;}
+.empty-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:8px;}
+.empty-sub{font-size:14px;color:var(--text2);margin-bottom:24px;}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;}
+.tag-petrol{background:rgba(239,68,68,0.15);color:#f87171;}
+.tag-diesel{background:rgba(59,130,246,0.15);color:#60a5fa;}
+.tag-hybrid{background:rgba(34,197,94,0.15);color:#4ade80;}
+.tag-electric{background:rgba(168,85,247,0.15);color:#c084fc;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;font-size:14px;display:flex;align-items:center;gap:10px;z-index:999;transform:translateY(80px);opacity:0;transition:all 0.3s;max-width:360px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(34,197,94,0.4);}
+.toast.error{border-color:rgba(239,68,68,0.4);}
+.page-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:8px;}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--text2);}
+
+@media(max-width:640px){
+  main{padding:16px;}
+  .form-row,.form-row-3{grid-template-columns:1fr;}
+  .sth,.str{grid-template-columns:2fr 1fr 100px;}
+  .sth>*:nth-child(n+3):not(:last-child),.str>*:nth-child(n+3):not(:last-child){display:none;}
+  .detail-car-name{font-size:28px;}
+  .checkbox-grid{grid-template-columns:1fr 1fr;}
+  .cost5y-rows{grid-template-columns:1fr;}
+  .cost5y-item{border-right:none;}
+}
 </style>
 </head>
 <body>
@@ -208,9 +241,12 @@
 <header>
   <div style="display:flex;align-items:center">
     <span class="logo">Auto<span>Score</span></span>
-    <span class="version-badge">v1.2</span>
+    <span class="version-badge">v1.3</span>
   </div>
-  <button class="btn btn-primary" onclick="openModal(null)">+ Pridať auto</button>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="sync-indicator" id="syncIndicator"><div class="sync-dot"></div><span id="syncText">Lokálne</span></div>
+    <button class="btn btn-primary btn-sm" onclick="openModal(null)">+ Pridať auto</button>
+  </div>
 </header>
 
 <div class="nav-tabs">
@@ -221,20 +257,22 @@
 </div>
 
 <main>
+  <!-- CARS -->
   <div class="view active" id="view-cars">
     <div class="page-header">
       <div><div class="page-title">Moje autá</div><div class="page-sub" id="carCount">Zatiaľ žiadne autá</div></div>
+      <button class="btn btn-green btn-sm" onclick="syncNow()" id="btnSync" style="display:none">☁️ Sync</button>
     </div>
     <div class="cars-grid" id="carsGrid"></div>
   </div>
 
+  <!-- SUMMARY -->
   <div class="view" id="view-summary">
-    <div class="page-header">
-      <div><div class="page-title">Zhrnutie & Odporúčanie</div><div class="page-sub">Porovnanie všetkých áut podľa profilu</div></div>
-    </div>
+    <div class="page-header"><div><div class="page-title">Zhrnutie & Odporúčanie</div><div class="page-sub">Porovnanie podľa profilu · náklady za 5 rokov</div></div></div>
     <div id="summaryContent"></div>
   </div>
 
+  <!-- WEIGHTS -->
   <div class="view" id="view-weights">
     <div class="page-header">
       <div><div class="page-title">Váhy parametrov</div><div class="page-sub">Nastav dôležitosť každého parametra</div></div>
@@ -242,54 +280,123 @@
     </div>
     <div class="weights-panel">
       <div class="weights-title">Tvoj profil: Rodinné auto 🏠</div>
-      <div class="weights-sub">Váhy nastavené pre rodinné auto — spoľahlivosť, priestor, výbava, výkon.</div>
+      <div class="weights-sub">Váhy pre rodinné auto — spoľahlivosť, priestor, výbava, výkon, celkové náklady.</div>
       <div class="weights-grid" id="weightsGrid"></div>
     </div>
     <div style="text-align:center;color:var(--text3);font-size:13px;margin-top:12px" id="weightsTotalDisplay"></div>
   </div>
 
-  <!-- SETTINGS TAB -->
+  <!-- SETTINGS -->
   <div class="view" id="view-settings">
-    <div class="page-header">
-      <div><div class="page-title">Nastavenia</div><div class="page-sub">API kľúč a konfigurácia</div></div>
+    <div class="page-header"><div><div class="page-title">Nastavenia</div><div class="page-sub">API kľúče a Google Sheets sync</div></div></div>
+
+    <!-- GROQ -->
+    <div class="settings-card">
+      <div class="settings-card-title">🤖 Groq API kľúč</div>
+      <div class="settings-card-sub">Zadarmo · 14 400 req/deň · Model: Llama 3.3 70B<br>Získaj kľúč na <a href="https://console.groq.com" target="_blank">console.groq.com</a> → API Keys → Create API Key</div>
+      <div class="api-key-row">
+        <input class="api-key-input" type="password" id="groqKeyInput" placeholder="gsk_..." />
+        <button class="btn btn-sm btn-primary" onclick="saveGroqKey()">Uložiť</button>
+        <button class="btn btn-sm btn-danger" id="btnClearGroq" onclick="clearGroqKey()" style="display:none">Odstrániť</button>
+      </div>
+      <div id="groqKeyStatus" style="margin-top:10px"></div>
     </div>
 
-    <div class="api-banner" id="apiBanner">
-      <div class="api-banner-icon">🤖</div>
-      <div class="api-banner-body">
-        <div class="api-banner-title">Groq API kľúč</div>
-        <div class="api-banner-sub">
-          Groq je <strong>zadarmo</strong> — 14 400 requestov za deň.<br>
-          <strong>Postup:</strong> Choď na <a href="https://console.groq.com" target="_blank">console.groq.com</a> → prihlásiť sa → <em>API Keys</em> → <em>Create API Key</em>.<br>
-          Kľúč začína <code style="color:var(--accent);font-family:'DM Mono',monospace">gsk_...</code>
+    <!-- GOOGLE SHEETS -->
+    <div class="settings-card">
+      <div class="settings-card-title">☁️ Google Sheets Sync</div>
+      <div class="settings-card-sub">Dáta sa ukladajú do tvojho Google Sheetu — prístupné z PC aj mobilu v reálnom čase.</div>
+
+      <div class="step-guide">
+        <div class="step"><div class="step-num">1</div><div class="step-text">Otvor <a href="https://sheets.new" target="_blank" style="color:var(--accent)">sheets.new</a> — vytvorí sa nový Google Sheet. Pomenuj ho napr. <strong>AutoScore</strong>.</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">V menu klikni <strong>Rozšírenia → Apps Script</strong>. Otvorí sa editor.</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Vymaž existujúci kód a vlož kód zo sekcie nižšie. Klikni <strong>Uložiť (💾)</strong>.</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Klikni <strong>Nasadiť → Nové nasadenie</strong>. Typ: <strong>Webová aplikácia</strong>. Spúšťať ako: <strong>Ja</strong>. Prístup: <strong>Ktokoľvek</strong>. Klikni <strong>Nasadiť</strong>.</div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-text">Skopíruj <strong>URL webovej aplikácie</strong> a vlož ju sem:</div></div>
+      </div>
+
+      <div class="api-key-row" style="margin-top:8px">
+        <input class="api-key-input" type="text" id="sheetsUrlInput" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:11px" />
+        <button class="btn btn-sm btn-primary" onclick="saveSheetsUrl()">Uložiť URL</button>
+        <button class="btn btn-sm btn-danger" id="btnClearSheets" onclick="clearSheetsUrl()" style="display:none">Odstrániť</button>
+      </div>
+      <div id="sheetsUrlStatus" style="margin-top:10px"></div>
+
+      <div style="margin-top:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Apps Script kód (skopíruj):</div>
+        <div style="position:relative">
+          <pre id="appsScriptCode" style="background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);overflow-x:auto;line-height:1.6;max-height:220px;overflow-y:auto">const SHEET_NAME = 'Cars';
+
+function doGet(e) {
+  return handleRequest(e);
+}
+
+function doPost(e) {
+  return handleRequest(e);
+}
+
+function handleRequest(e) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) sheet = ss.insertSheet(SHEET_NAME);
+
+  const action = (e.parameter && e.parameter.action) || (e.postData && JSON.parse(e.postData.contents).action);
+  const cors = ContentService.createTextOutput;
+
+  if (action === 'read') {
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0] || [];
+    const rows = data.slice(1).map(row => {
+      const obj = {};
+      headers.forEach((h, i) => { try { obj[h] = JSON.parse(row[i]); } catch { obj[h] = row[i]; } });
+      return obj;
+    }).filter(r => r.id);
+    return ContentService.createTextOutput(JSON.stringify({ok:true,cars:rows})).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === 'write') {
+    const body = JSON.parse(e.postData.contents);
+    const cars = body.cars || [];
+    sheet.clearContents();
+    if (cars.length === 0) return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+    const keys = Object.keys(cars[0]);
+    sheet.appendRow(keys);
+    cars.forEach(car => sheet.appendRow(keys.map(k => typeof car[k] === 'object' ? JSON.stringify(car[k]) : car[k])));
+    return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  return ContentService.createTextOutput(JSON.stringify({ok:false,error:'Unknown action'})).setMimeType(ContentService.MimeType.JSON);
+}</pre>
+          <button class="btn btn-sm btn-secondary" style="position:absolute;top:8px;right:8px" onclick="copyAppsScript()">📋 Kopírovať</button>
         </div>
-        <div class="api-banner-input-row">
-          <input class="api-key-input" type="password" id="apiKeyInput" placeholder="gsk_..." />
-          <button class="btn btn-sm btn-primary" onclick="saveApiKey()">Uložiť kľúč</button>
-          <button class="btn btn-sm btn-danger" id="btnClearKey" onclick="clearApiKey()" style="display:none">Odstrániť</button>
-        </div>
-        <div id="apiKeyStatus" style="margin-top:10px"></div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-green btn-sm" onclick="syncNow()">☁️ Synchronizovať teraz</button>
+        <button class="btn btn-secondary btn-sm" onclick="loadFromSheets()">⬇️ Načítať zo Sheets</button>
       </div>
     </div>
 
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:16px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:12px">ℹ️ O aplikácii</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.7">
-        <div>Verzia: <strong style="color:var(--text)">1.2</strong></div>
-        <div>AI model: <strong style="color:var(--text)">Llama 3.3 70B (Groq)</strong></div>
+    <!-- INFO -->
+    <div class="settings-card">
+      <div class="settings-card-title">ℹ️ O aplikácii</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.9">
+        <div>Verzia: <strong style="color:var(--text)">1.3</strong></div>
+        <div>AI model: <strong style="color:var(--text)">Llama 3.3 70B via Groq</strong></div>
         <div>Trh: <strong style="color:var(--text)">Rakúsko (AT) · EUR €</strong></div>
         <div>Profil: <strong style="color:var(--text)">Rodinné auto</strong></div>
-        <div style="margin-top:10px">Dáta sa ukladajú <strong style="color:var(--text)">lokálne v prehliadači</strong> (localStorage) — nikam sa neposielajú okrem AI requestov na Groq.</div>
+        <div>Sync: <strong style="color:var(--text)">Google Sheets (voliteľné)</strong></div>
       </div>
     </div>
 
-    <div style="background:var(--bg2);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:20px;margin-top:16px">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:8px;color:var(--red)">⚠️ Nebezpečná zóna</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Vymaže všetky autá a nastavenia.</div>
+    <div class="settings-card" style="border-color:rgba(239,68,68,0.3)">
+      <div class="settings-card-title" style="color:var(--red)">⚠️ Nebezpečná zóna</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:12px">Vymaže všetky lokálne dáta a nastavenia.</div>
       <button class="btn btn-danger" onclick="if(confirm('Naozaj vymazať všetky dáta?')){localStorage.clear();location.reload()}">🗑 Vymazať všetky dáta</button>
     </div>
   </div>
 
+  <!-- DETAIL -->
   <div class="view" id="view-detail">
     <div class="detail-back" onclick="showView('cars',document.querySelector('.tab-btn'))">← Späť na autá</div>
     <div id="detailContent"></div>
@@ -305,24 +412,23 @@
     </div>
     <div class="modal-body">
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Značka *</label><input class="form-input" id="inp-make" placeholder="napr. Volkswagen" /></div>
-        <div class="form-group"><label class="form-label">Model *</label><input class="form-input" id="inp-model" placeholder="napr. Passat" /></div>
+        <div class="form-group"><label class="form-label">Značka *</label><input class="form-input" id="inp-make" placeholder="napr. Volkswagen"/></div>
+        <div class="form-group"><label class="form-label">Model *</label><input class="form-input" id="inp-model" placeholder="napr. Passat"/></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Rok</label><input class="form-input" id="inp-year" placeholder="2024" type="number" /></div>
-        <div class="form-group"><label class="form-label">Motor / Verzia</label><input class="form-input" id="inp-engine" placeholder="napr. 2.0 TDI 150 DSG" /></div>
+        <div class="form-group"><label class="form-label">Rok</label><input class="form-input" id="inp-year" placeholder="2024" type="number"/></div>
+        <div class="form-group"><label class="form-label">Motor / Verzia</label><input class="form-input" id="inp-engine" placeholder="2.0 TDI 150 DSG"/></div>
       </div>
-      <div class="form-group"><label class="form-label">Kúpna cena (€) *</label><input class="form-input" id="inp-price" placeholder="42000" type="number" /></div>
+      <div class="form-group"><label class="form-label">Kúpna cena (€) *</label><input class="form-input" id="inp-price" placeholder="42000" type="number"/></div>
 
-      <div id="aiLoadingBar" style="display:none">
-        <div class="ai-loading"><div class="spinner"></div><span id="aiLoadingText">Groq AI dopĺňa parametre...</span></div>
-      </div>
+      <div id="aiLoadingBar" style="display:none"><div class="ai-loading"><div class="spinner"></div><span id="aiLoadingText">Groq AI dopĺňa parametre...</span></div></div>
 
       <div id="aiFieldsSection" style="display:none">
+
         <div class="section-divider">Technické parametre</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Výkon (kW)</label><input class="form-input" id="inp-power" type="number" /></div>
-          <div class="form-group"><label class="form-label">Spotreba (l/100km)</label><input class="form-input" id="inp-consumption" type="number" step="0.1" /></div>
+          <div class="form-group"><label class="form-label">Výkon (kW)</label><input class="form-input" id="inp-power" type="number"/></div>
+          <div class="form-group"><label class="form-label">Spotreba (l alebo kWh/100km)</label><input class="form-input" id="inp-consumption" type="number" step="0.1"/></div>
         </div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Typ paliva</label>
@@ -331,15 +437,19 @@
               <option value="hybrid">Hybrid</option><option value="electric">Elektro</option>
             </select>
           </div>
-          <div class="form-group"><label class="form-label">Záruka (roky)</label><input class="form-input" id="inp-warranty" type="number" /></div>
+          <div class="form-group"><label class="form-label">Záruka (roky)</label><input class="form-input" id="inp-warranty" type="number"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Ročný nájazd (km)</label><input class="form-input" id="inp-mileage" type="number" placeholder="20000"/></div>
+          <div class="form-group"><label class="form-label">Cena paliva (€/l alebo €/kWh)</label><input class="form-input" id="inp-fuel-price" type="number" step="0.01" placeholder="1.65"/></div>
         </div>
 
         <div class="section-divider">Rozmery & Priestor</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Objem kufra (l)</label><input class="form-input" id="inp-trunk" type="number" /></div>
-          <div class="form-group"><label class="form-label">Počet miest</label><input class="form-input" id="inp-seats" type="number" /></div>
+          <div class="form-group"><label class="form-label">Objem kufra (l)</label><input class="form-input" id="inp-trunk" type="number"/></div>
+          <div class="form-group"><label class="form-label">Počet miest</label><input class="form-input" id="inp-seats" type="number"/></div>
         </div>
-        <div class="form-group"><label class="form-label">Rozmery (dĺžka × šírka cm)</label><input class="form-input" id="inp-dimensions" placeholder="napr. 477x183" /></div>
+        <div class="form-group"><label class="form-label">Rozmery (dĺžka × šírka cm)</label><input class="form-input" id="inp-dimensions" placeholder="477x183"/></div>
 
         <div class="section-divider">Pohon & Výbava</div>
         <div style="margin-bottom:10px">
@@ -350,28 +460,53 @@
         <div class="form-label" style="margin-bottom:8px">Výbava auta</div>
         <div class="checkbox-grid" id="equipGrid"></div>
 
-        <div class="section-divider">Financie & Náklady</div>
+        <div class="section-divider">Pneumatiky</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Hodnota po 5 rokoch (€)</label><input class="form-input" id="inp-value5y" type="number" /></div>
-          <div class="form-group"><label class="form-label">Leasing / mesiac (€)</label><input class="form-input" id="inp-leasing" type="number" /><div class="form-hint">Prázdne = kúpa za hotové</div></div>
+          <div class="form-group"><label class="form-label">Rozmer letných (napr. 225/45 R18)</label><input class="form-input" id="inp-tyre-summer" placeholder="225/45 R18"/></div>
+          <div class="form-group"><label class="form-label">Rozmer zimných (napr. 215/55 R17)</label><input class="form-input" id="inp-tyre-winter" placeholder="215/55 R17"/></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Servis / rok (€)</label><input class="form-input" id="inp-service" type="number" /></div>
-          <div class="form-group"><label class="form-label">Pneumatiky / rok (€)</label><input class="form-input" id="inp-tyres" type="number" /></div>
+          <div class="form-group"><label class="form-label">Cena sady letných €</label><input class="form-input" id="inp-tyre-summer-price" type="number" placeholder="AI dopočíta"/></div>
+          <div class="form-group"><label class="form-label">Cena sady zimných €</label><input class="form-input" id="inp-tyre-winter-price" type="number" placeholder="AI dopočíta"/></div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:-4px;margin-bottom:8px">Výdrž pneumatík: 40 000 km. AI dopočíta ročné náklady podľa nájazdu.</div>
+
+        <div class="section-divider">Leasing</div>
+        <div class="form-row-3">
+          <div class="form-group"><label class="form-label">Prvá splátka (€)</label><input class="form-input" id="inp-leasing-first" type="number" placeholder="4000"/></div>
+          <div class="form-group"><label class="form-label">Mesačná splátka (€)</label><input class="form-input" id="inp-leasing-monthly" type="number" placeholder="450"/></div>
+          <div class="form-group"><label class="form-label">Posledná splátka (€)</label><input class="form-input" id="inp-leasing-last" type="number" placeholder="8000"/></div>
+        </div>
+        <div class="form-hint" style="margin-top:-8px">Nechaj prázdne ak kupuješ za hotové</div>
+
+        <div class="section-divider">Poistenie & Servis</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">KFZ poistenie (€/mesiac)</label><input class="form-input" id="inp-kfz" type="number" placeholder="35"/></div>
+          <div class="form-group"><label class="form-label">Kasko poistenie (€/mesiac)</label><input class="form-input" id="inp-kasko" type="number" placeholder="55"/></div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">KFZ poistenie / rok (€)</label><input class="form-input" id="inp-kfz" type="number" /></div>
-          <div class="form-group"><label class="form-label">Kasko poistenie / rok (€)</label><input class="form-input" id="inp-kasko" type="number" /></div>
+          <div class="form-group"><label class="form-label">Servisné náklady (€/rok)</label><input class="form-input" id="inp-service" type="number" placeholder="600"/></div>
+          <div class="form-group"><label class="form-label">Hodnota po 5 rokoch (€)</label><input class="form-input" id="inp-value5y" type="number"/></div>
         </div>
 
         <div class="section-divider">Subjektívne</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Pocit z auta (1–10)</label><input class="form-input" id="inp-feeling" type="number" min="1" max="10" placeholder="8" /></div>
-          <div class="form-group"><label class="form-label">Výbava / tech (1–10)</label><input class="form-input" id="inp-equipment" type="number" min="1" max="10" /></div>
+          <div class="form-group"><label class="form-label">Pocit z auta (1–10)</label><input class="form-input" id="inp-feeling" type="number" min="1" max="10" placeholder="8"/></div>
+          <div class="form-group"><label class="form-label">Výbava / tech (1–10)</label><input class="form-input" id="inp-equipment" type="number" min="1" max="10"/></div>
         </div>
-        <div class="form-group"><label class="form-label">Poznámky</label><input class="form-input" id="inp-notes" placeholder="farba, špeciálne výbavy, zdroj ceny..." /></div>
-      </div>
+        <div class="form-group"><label class="form-label">Poznámky</label><input class="form-input" id="inp-notes" placeholder="farba, výbavy, zdroj ceny..."/></div>
 
+        <!-- 5Y PREVIEW -->
+        <div id="cost5yPreview" style="display:none">
+          <div class="section-divider">Náhľad: Celkové náklady za 5 rokov</div>
+          <div class="cost5y-box">
+            <div class="cost5y-header">Kalkulácia · 5 rokov</div>
+            <div class="cost5y-rows" id="cost5yRows"></div>
+            <div class="cost5y-total"><span class="cost5y-total-label">Celkové náklady 5r</span><span class="cost5y-total-value" id="cost5yTotalVal">—</span></div>
+          </div>
+        </div>
+
+      </div>
       <div id="manualToggleSection">
         <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="showManualFields()">Vyplniť manuálne (bez AI)</button>
       </div>
@@ -387,315 +522,455 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ──
-let cars = JSON.parse(localStorage.getItem('autoscore_cars') || '[]');
-let apiKey = localStorage.getItem('autoscore_groq_key') || '';
+// ═══ STATE ═══
+let cars = JSON.parse(localStorage.getItem('autoscore_cars')||'[]');
+let groqKey = localStorage.getItem('autoscore_groq_key')||'';
+let sheetsUrl = localStorage.getItem('autoscore_sheets_url')||'';
 let editingId = null;
 
-const EQUIPMENT = [
-  {id:'hud', label:'🪟 HUD displej'},
-  {id:'vent_seats', label:'💨 Ventilované sedadlá'},
-  {id:'heated_seats', label:'🔥 Vyhrievané sedadlá'},
-  {id:'massage_seats', label:'💆 Masážne sedadlá'},
-  {id:'adaptive_cc', label:'🚦 Adaptívny tempomat'},
-  {id:'lane_assist', label:'↔️ Lane assist'},
-  {id:'parking_sensors', label:'📡 Parkovacie senzory'},
-  {id:'camera_360', label:'📷 360° kamera'},
-  {id:'wireless_charge', label:'⚡ Bezdrôtové nabíjanie'},
-  {id:'pano_roof', label:'☀️ Panoramatická strecha'},
-  {id:'led_matrix', label:'💡 Matrix LED svetlá'},
-  {id:'nav', label:'🗺️ Navigácia'},
-  {id:'keyless', label:'🔑 Keyless vstup'},
-  {id:'trailer_hitch', label:'🔩 Ťažné zariadenie'},
-  {id:'air_susp', label:'🛞 Vzduchový podvozok'},
-  {id:'sound_system', label:'🔊 Prémiový zvuk'},
+const EQUIPMENT=[
+  {id:'hud',label:'🪟 HUD displej'},{id:'vent_seats',label:'💨 Ventilované sedadlá'},
+  {id:'heated_seats',label:'🔥 Vyhrievané sedadlá'},{id:'massage_seats',label:'💆 Masážne sedadlá'},
+  {id:'adaptive_cc',label:'🚦 Adaptívny tempomat'},{id:'lane_assist',label:'↔️ Lane assist'},
+  {id:'parking_sensors',label:'📡 Parkovacie senzory'},{id:'camera_360',label:'📷 360° kamera'},
+  {id:'wireless_charge',label:'⚡ Bezdrôtové nabíjanie'},{id:'pano_roof',label:'☀️ Panoramatická strecha'},
+  {id:'led_matrix',label:'💡 Matrix LED svetlá'},{id:'nav',label:'🗺️ Navigácia'},
+  {id:'keyless',label:'🔑 Keyless vstup'},{id:'trailer_hitch',label:'🔩 Ťažné zariadenie'},
+  {id:'air_susp',label:'🛞 Vzduchový podvozok'},{id:'sound_system',label:'🔊 Prémiový zvuk'},
 ];
 
-const DEFAULT_WEIGHTS = {
-  'Cena kúpy':15,'Hodnota po 5r':8,'Leasing':5,'Ročné náklady':12,
-  'Spotreba':8,'Záruka':7,'Priestor / kufor':12,'Výkon':8,
-  'Výbava':10,'Pocit z auta':10,'Spoľahlivosť':5,
+const DEFAULT_WEIGHTS={
+  'Cena kúpy':12,'Hodnota po 5r':8,'Leasing':4,'Celk. náklady 5r':15,
+  'Spotreba':7,'Záruka':6,'Priestor / kufor':12,'Výkon':8,
+  'Výbava':10,'Pocit z auta':10,'Spoľahlivosť':8,
 };
-let weights = JSON.parse(localStorage.getItem('autoscore_weights') || JSON.stringify(DEFAULT_WEIGHTS));
+let weights=JSON.parse(localStorage.getItem('autoscore_weights')||JSON.stringify(DEFAULT_WEIGHTS));
 
-// ── INIT ──
-window.onload = () => {
+const FL={diesel:'Diesel',petrol:'Benzín',hybrid:'Hybrid',electric:'Elektro'};
+
+// ═══ INIT ═══
+window.onload=()=>{
   buildEquipGrid();
   renderWeightsPanel();
   renderCarsGrid();
   renderSummary();
-  renderApiKeyStatus();
+  renderSettingsStatus();
+  if(sheetsUrl){setSyncStatus('synced','Sheets aktívne');document.getElementById('btnSync').style.display='inline-flex';}
 };
 
-// ── EQUIPMENT ──
-function buildEquipGrid() {
-  document.getElementById('equipGrid').innerHTML = EQUIPMENT.map(e => `
+// ═══ EQUIPMENT ═══
+function buildEquipGrid(){
+  document.getElementById('equipGrid').innerHTML=EQUIPMENT.map(e=>`
     <label class="checkbox-item" id="chklabel-${e.id}" onclick="toggleCb('${e.id}')">
       <input type="checkbox" id="chk-${e.id}"><span class="check-box" id="chkbox-${e.id}">✓</span><span>${e.label}</span>
     </label>`).join('');
 }
-function toggleCb(id) {
-  const cb = document.getElementById('chk-'+id), box = document.getElementById('chkbox-'+id), lbl = document.getElementById('chklabel-'+id);
-  if (!cb) return;
-  cb.checked = !cb.checked;
-  lbl.classList.toggle('checked', cb.checked);
-  box.style.color = cb.checked ? (id==='awd'?'#fff':'#000') : 'transparent';
+function toggleCb(id){
+  const cb=document.getElementById('chk-'+id),box=document.getElementById('chkbox-'+id),lbl=document.getElementById('chklabel-'+id);
+  if(!cb)return; cb.checked=!cb.checked;
+  lbl.classList.toggle('checked',cb.checked);
+  box.style.color=cb.checked?(id==='awd'?'#fff':'#000'):'transparent';
 }
-function setCb(id, val) {
-  const cb = document.getElementById('chk-'+id), box = document.getElementById('chkbox-'+id), lbl = document.getElementById('chklabel-'+id);
-  if (!cb) return;
-  cb.checked = !!val;
-  lbl.classList.toggle('checked', !!val);
-  box.style.color = val ? (id==='awd'?'#fff':'#000') : 'transparent';
+function setCb(id,val){
+  const cb=document.getElementById('chk-'+id),box=document.getElementById('chkbox-'+id),lbl=document.getElementById('chklabel-'+id);
+  if(!cb)return; cb.checked=!!val;
+  lbl.classList.toggle('checked',!!val);
+  box.style.color=val?(id==='awd'?'#fff':'#000'):'transparent';
 }
-function getEquip() {
-  const r = {awd: document.getElementById('chk-awd')?.checked||false};
-  EQUIPMENT.forEach(e => r[e.id] = document.getElementById('chk-'+e.id)?.checked||false);
+function getEquip(){
+  const r={awd:document.getElementById('chk-awd')?.checked||false};
+  EQUIPMENT.forEach(e=>r[e.id]=document.getElementById('chk-'+e.id)?.checked||false);
   return r;
 }
-function clearEquip() { setCb('awd',false); EQUIPMENT.forEach(e=>setCb(e.id,false)); }
+function clearEquip(){setCb('awd',false);EQUIPMENT.forEach(e=>setCb(e.id,false));}
 
-// ── API KEY ──
-function saveApiKey() {
-  const v = document.getElementById('apiKeyInput').value.trim();
-  if (!v) return showToast('Zadaj API kľúč', 'error');
-  if (!v.startsWith('gsk_')) return showToast('Groq kľúč musí začínať gsk_...', 'error');
-  apiKey = v;
-  localStorage.setItem('autoscore_groq_key', apiKey);
-  renderApiKeyStatus();
-  showToast('Groq API kľúč uložený ✓', 'success');
+// ═══ 5Y COST CALC ═══
+function calc5y(car){
+  const mileage=car.mileage||20000;
+  const fuelPrice=car.fuelPrice||1.65;
+  const consumption=car.consumption||0;
+  const tyreSummer=car.tyreSummerPrice||0;
+  const tyreWinter=car.tyreWinterPrice||0;
+  const tyreLifeKm=40000;
+
+  // fuel
+  const fuelPerYear = car.fuel==='electric'
+    ? (consumption/100)*mileage*fuelPrice
+    : (consumption/100)*mileage*fuelPrice;
+  const fuel5y=Math.round(fuelPerYear*5);
+
+  // tyres — we assume 2 sets (summer + winter), each lasts 40k km
+  // sets needed over 5 years = (mileage*5) / 40000
+  const totalKm5y=mileage*5;
+  const summerSetsNeeded=Math.max(1,Math.ceil(totalKm5y/tyreLifeKm));
+  const winterSetsNeeded=Math.max(1,Math.ceil(totalKm5y/tyreLifeKm));
+  const tyres5y=Math.round(summerSetsNeeded*tyreSummer+winterSetsNeeded*tyreWinter);
+
+  // insurance (monthly → *60)
+  const ins5y=Math.round(((car.kfz||0)+(car.kasko||0))*60);
+
+  // service
+  const service5y=Math.round((car.service||0)*5);
+
+  // depreciation
+  const depreciation=car.value5y?Math.round(car.price-car.value5y):null;
+
+  // leasing
+  const leasingTotal=car.leasingFirst||car.leasingMonthly||car.leasingLast
+    ? Math.round((car.leasingFirst||0)+(car.leasingMonthly||0)*60+(car.leasingLast||0))
+    : null;
+
+  const items=[
+    {label:'Palivo 5r',value:fuel5y||null},
+    {label:'Pneumatiky 5r',value:tyres5y||null},
+    {label:'Poistenie 5r',value:ins5y||null},
+    {label:'Servis 5r',value:service5y||null},
+    {label:'Odpis hodnoty',value:depreciation},
+    {label:'Leasing spolu',value:leasingTotal},
+  ];
+
+  const total=items.reduce((s,i)=>s+(i.value||0),0);
+  return{items,total,fuel5y,tyres5y,ins5y,service5y,depreciation,leasingTotal};
 }
-function clearApiKey() {
-  apiKey = '';
-  localStorage.removeItem('autoscore_groq_key');
-  document.getElementById('apiKeyInput').value = '';
-  renderApiKeyStatus();
-  showToast('API kľúč odstránený', 'success');
+
+function updateCost5yPreview(){
+  const price=parseFloat(document.getElementById('inp-price').value)||0;
+  const mileage=parseFloat(document.getElementById('inp-mileage').value)||20000;
+  const fuelPrice=parseFloat(document.getElementById('inp-fuel-price').value)||1.65;
+  const consumption=parseFloat(document.getElementById('inp-consumption').value)||0;
+  const tyreSummer=parseFloat(document.getElementById('inp-tyre-summer-price').value)||0;
+  const tyreWinter=parseFloat(document.getElementById('inp-tyre-winter-price').value)||0;
+  const kfz=parseFloat(document.getElementById('inp-kfz').value)||0;
+  const kasko=parseFloat(document.getElementById('inp-kasko').value)||0;
+  const service=parseFloat(document.getElementById('inp-service').value)||0;
+  const value5y=parseFloat(document.getElementById('inp-value5y').value)||0;
+  const lFirst=parseFloat(document.getElementById('inp-leasing-first').value)||0;
+  const lMonthly=parseFloat(document.getElementById('inp-leasing-monthly').value)||0;
+  const lLast=parseFloat(document.getElementById('inp-leasing-last').value)||0;
+  const fuel=document.getElementById('inp-fuel').value;
+
+  const car={price,mileage,fuelPrice,consumption,tyreSummerPrice:tyreSummer,tyreWinterPrice:tyreWinter,kfz,kasko,service,value5y,leasingFirst:lFirst,leasingMonthly:lMonthly,leasingLast:lLast,fuel};
+  const {items,total}=calc5y(car);
+
+  if(!price&&!consumption&&!service) return;
+  document.getElementById('cost5yPreview').style.display='block';
+  document.getElementById('cost5yRows').innerHTML=items.map(i=>`
+    <div class="cost5y-item">
+      <div class="cost5y-label">${i.label}</div>
+      <div class="cost5y-value">${i.value!=null&&i.value>0?'€'+i.value.toLocaleString():'—'}</div>
+    </div>`).join('');
+  document.getElementById('cost5yTotalVal').textContent=total>0?'€'+total.toLocaleString():'—';
 }
-function renderApiKeyStatus() {
-  const statusEl = document.getElementById('apiKeyStatus');
-  const clearBtn = document.getElementById('btnClearKey');
-  if (apiKey) {
-    statusEl.innerHTML = `<div class="api-key-saved">✓ Kľúč uložený: <code style="font-family:'DM Mono',monospace">${apiKey.slice(0,8)}...${apiKey.slice(-4)}</code></div>`;
-    clearBtn.style.display = 'inline-flex';
-    document.getElementById('apiKeyInput').value = apiKey;
+
+// Auto-update preview on input change
+document.addEventListener('input',e=>{
+  const ids=['inp-price','inp-mileage','inp-fuel-price','inp-consumption','inp-tyre-summer-price','inp-tyre-winter-price','inp-kfz','inp-kasko','inp-service','inp-value5y','inp-leasing-first','inp-leasing-monthly','inp-leasing-last'];
+  if(ids.includes(e.target?.id)) updateCost5yPreview();
+});
+
+// ═══ SETTINGS / API KEYS ═══
+function saveGroqKey(){
+  const v=document.getElementById('groqKeyInput').value.trim();
+  if(!v)return showToast('Zadaj API kľúč','error');
+  if(!v.startsWith('gsk_'))return showToast('Groq kľúč musí začínať gsk_...','error');
+  groqKey=v; localStorage.setItem('autoscore_groq_key',groqKey);
+  renderSettingsStatus(); showToast('Groq kľúč uložený ✓','success');
+}
+function clearGroqKey(){groqKey='';localStorage.removeItem('autoscore_groq_key');document.getElementById('groqKeyInput').value='';renderSettingsStatus();showToast('Groq kľúč odstránený','success');}
+function saveSheetsUrl(){
+  const v=document.getElementById('sheetsUrlInput').value.trim();
+  if(!v||!v.startsWith('https://script.google.com'))return showToast('Vlož platnú Apps Script URL','error');
+  sheetsUrl=v; localStorage.setItem('autoscore_sheets_url',sheetsUrl);
+  renderSettingsStatus(); document.getElementById('btnSync').style.display='inline-flex';
+  setSyncStatus('synced','Sheets aktívne');
+  showToast('Sheets URL uložená ✓','success');
+}
+function clearSheetsUrl(){sheetsUrl='';localStorage.removeItem('autoscore_sheets_url');document.getElementById('sheetsUrlInput').value='';renderSettingsStatus();setSyncStatus('','Lokálne');document.getElementById('btnSync').style.display='none';}
+
+function renderSettingsStatus(){
+  // Groq
+  const gEl=document.getElementById('groqKeyStatus'),gClr=document.getElementById('btnClearGroq');
+  if(groqKey){
+    gEl.innerHTML=`<div class="key-saved">✓ ${groqKey.slice(0,8)}...${groqKey.slice(-4)}</div>`;
+    gClr.style.display='inline-flex'; document.getElementById('groqKeyInput').value=groqKey;
   } else {
-    statusEl.innerHTML = `<div style="font-size:12px;color:var(--text3)">⚠️ Žiadny kľúč — AI dopĺňanie nebude fungovať</div>`;
-    clearBtn.style.display = 'none';
+    gEl.innerHTML=`<div style="font-size:12px;color:var(--text3)">⚠️ Kľúč nie je nastavený</div>`;
+    gClr.style.display='none';
+  }
+  // Sheets
+  const sEl=document.getElementById('sheetsUrlStatus'),sClr=document.getElementById('btnClearSheets');
+  if(sheetsUrl){
+    sEl.innerHTML=`<div class="key-saved">✓ URL uložená</div>`;
+    sClr.style.display='inline-flex'; document.getElementById('sheetsUrlInput').value=sheetsUrl;
+  } else {
+    sEl.innerHTML=`<div style="font-size:12px;color:var(--text3)">⚠️ Sheets nie je nastavené</div>`;
+    sClr.style.display='none';
   }
 }
 
-// ── VIEWS ──
-function showView(name, btn) {
+function copyAppsScript(){
+  const text=document.getElementById('appsScriptCode').textContent;
+  navigator.clipboard.writeText(text).then(()=>showToast('Kód skopírovaný ✓','success')).catch(()=>showToast('Kopírovanie zlyhalo','error'));
+}
+
+// ═══ GOOGLE SHEETS SYNC ═══
+function setSyncStatus(type,text){
+  const el=document.getElementById('syncIndicator');
+  el.className='sync-indicator'+(type?' '+type:'');
+  document.getElementById('syncText').textContent=text;
+}
+
+async function syncNow(){
+  if(!sheetsUrl)return showToast('Nastav Sheets URL v Nastaveniach','error');
+  setSyncStatus('syncing','Synchronizujem...');
+  try{
+    const res=await fetch(sheetsUrl,{
+      method:'POST',
+      body:JSON.stringify({action:'write',cars}),
+    });
+    const data=await res.json();
+    if(data.ok){setSyncStatus('synced','Synced ✓');showToast('Dáta uložené do Google Sheets ✓','success');}
+    else throw new Error(data.error||'Chyba');
+  }catch(e){
+    setSyncStatus('error','Sync chyba');
+    showToast('Sheets sync chyba: '+e.message,'error');
+  }
+}
+
+async function loadFromSheets(){
+  if(!sheetsUrl)return showToast('Nastav Sheets URL v Nastaveniach','error');
+  setSyncStatus('syncing','Načítavam...');
+  try{
+    const res=await fetch(sheetsUrl+'?action=read');
+    const data=await res.json();
+    if(data.ok&&data.cars){
+      cars=data.cars;
+      saveCars();
+      renderCarsGrid(); renderSummary();
+      setSyncStatus('synced','Synced ✓');
+      showToast(`Načítaných ${cars.length} áut zo Sheets ✓`,'success');
+    } else throw new Error(data.error||'Žiadne dáta');
+  }catch(e){
+    setSyncStatus('error','Sync chyba');
+    showToast('Načítanie zlyhalo: '+e.message,'error');
+  }
+}
+
+// ═══ VIEWS ═══
+function showView(name,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
-  if (btn?.classList?.contains('tab-btn')) btn.classList.add('active');
-  if (name==='summary') renderSummary();
+  if(btn?.classList?.contains('tab-btn'))btn.classList.add('active');
+  if(name==='summary')renderSummary();
 }
-function showDetailView(id) {
+function showDetailView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-detail').classList.add('active');
   renderDetail(id);
 }
 
-// ── MODAL ──
-const FIELDS = ['make','model','year','engine','price','power','consumption','trunk','seats','dimensions','warranty','value5y','service','tyres','kfz','kasko','leasing','feeling','equipment','notes'];
+// ═══ MODAL ═══
+const FIELDS=['make','model','year','engine','price','power','consumption','trunk','seats','dimensions','warranty','value5y','service','kfz','kasko','leasing-first','leasing-monthly','leasing-last','feeling','equipment','notes','mileage','fuel-price','tyre-summer','tyre-winter','tyre-summer-price','tyre-winter-price'];
 
-function openModal(carId) {
-  editingId = carId;
+function openModal(carId){
+  editingId=carId;
   document.getElementById('carModal').classList.add('open');
-  document.getElementById('modalTitle').textContent = carId ? '✏️ Editovať auto' : 'Pridať nové auto';
-  document.getElementById('btnSave').textContent = carId ? 'Uložiť zmeny' : 'Uložiť auto';
+  document.getElementById('modalTitle').textContent=carId?'✏️ Editovať auto':'Pridať nové auto';
+  document.getElementById('btnSave').textContent=carId?'Uložiť zmeny':'Uložiť auto';
   FIELDS.forEach(f=>{const el=document.getElementById('inp-'+f);if(el)el.value='';});
-  document.getElementById('inp-fuel').value = 'diesel';
+  document.getElementById('inp-fuel').value='diesel';
+  document.getElementById('cost5yPreview').style.display='none';
   clearEquip();
-  if (carId) {
-    const car = cars.find(c=>c.id===carId); if(!car) return;
-    FIELDS.forEach(f=>{const el=document.getElementById('inp-'+f);if(el&&car[f]!=null)el.value=car[f];});
-    document.getElementById('inp-fuel').value = car.fuel||'diesel';
-    if (car.equip) Object.entries(car.equip).forEach(([k,v])=>setCb(k,v));
-    document.getElementById('aiFieldsSection').style.display = 'block';
-    document.getElementById('manualToggleSection').style.display = 'none';
+
+  if(carId){
+    const car=cars.find(c=>c.id===carId);if(!car)return;
+    const map={make:'make',model:'model',year:'year',engine:'engine',price:'price',power:'power',consumption:'consumption',trunk:'trunk',seats:'seats',dimensions:'dimensions',warranty:'warranty',value5y:'value5y',service:'service',kfz:'kfz',kasko:'kasko',feeling:'feeling',equipment:'equipment',notes:'notes',mileage:'mileage',fuelPrice:'fuel-price',tyreSummer:'tyre-summer',tyreWinter:'tyre-winter',tyreSummerPrice:'tyre-summer-price',tyreWinterPrice:'tyre-winter-price',leasingFirst:'leasing-first',leasingMonthly:'leasing-monthly',leasingLast:'leasing-last'};
+    Object.entries(map).forEach(([k,fid])=>{const el=document.getElementById('inp-'+fid);if(el&&car[k]!=null)el.value=car[k];});
+    document.getElementById('inp-fuel').value=car.fuel||'diesel';
+    if(car.equip)Object.entries(car.equip).forEach(([k,v])=>setCb(k,v));
+    document.getElementById('aiFieldsSection').style.display='block';
+    document.getElementById('manualToggleSection').style.display='none';
+    updateCost5yPreview();
   } else {
-    document.getElementById('aiFieldsSection').style.display = 'none';
-    document.getElementById('manualToggleSection').style.display = 'block';
+    document.getElementById('aiFieldsSection').style.display='none';
+    document.getElementById('manualToggleSection').style.display='block';
   }
 }
-function closeModal() { document.getElementById('carModal').classList.remove('open'); editingId=null; }
-function showManualFields() { document.getElementById('aiFieldsSection').style.display='block'; document.getElementById('manualToggleSection').style.display='none'; }
+function closeModal(){document.getElementById('carModal').classList.remove('open');editingId=null;}
+function showManualFields(){document.getElementById('aiFieldsSection').style.display='block';document.getElementById('manualToggleSection').style.display='none';}
 
-// ── GROQ AI ──
-async function fetchGroq() {
-  const make = document.getElementById('inp-make').value.trim();
-  const model = document.getElementById('inp-model').value.trim();
-  if (!make||!model) return showToast('Zadaj aspoň značku a model', 'error');
-  if (!apiKey) {
-    showView('settings', document.querySelectorAll('.tab-btn')[3]);
-    return showToast('Najprv ulož Groq API kľúč v Nastaveniach', 'error');
-  }
+// ═══ GROQ AI ═══
+async function fetchGroq(){
+  const make=document.getElementById('inp-make').value.trim();
+  const model=document.getElementById('inp-model').value.trim();
+  if(!make||!model)return showToast('Zadaj aspoň značku a model','error');
+  if(!groqKey){showView('settings',document.querySelectorAll('.tab-btn')[3]);return showToast('Nastav Groq API kľúč v Nastaveniach','error');}
 
   document.getElementById('aiLoadingBar').style.display='flex';
   document.getElementById('btnFetchAI').disabled=true;
-  document.getElementById('aiLoadingText').textContent = 'Groq AI dopĺňa parametre...';
+  document.getElementById('aiLoadingText').textContent='Groq AI dopĺňa parametre...';
 
-  const carDesc = [document.getElementById('inp-year').value, make, model, document.getElementById('inp-engine').value].filter(Boolean).join(' ');
+  const carDesc=[document.getElementById('inp-year').value,make,model,document.getElementById('inp-engine').value].filter(Boolean).join(' ');
+  const mileage=document.getElementById('inp-mileage').value||'20000';
 
-  const prompt = `You are a car expert for the Austrian market (AT, EUR). For the car "${carDesc}", return ONLY a valid JSON object with no additional text, no markdown, no explanation:
+  const prompt=`Car expert for Austrian market (AT, EUR). For "${carDesc}" annual mileage ${mileage}km. Return ONLY valid JSON:
 {
-  "power_kw": number,
-  "consumption": number (l/100km or kWh/100km for electric),
-  "trunk_l": number,
-  "seats": number,
-  "dimensions": "LengthxWidth in cm e.g. 477x183",
-  "fuel": "diesel|petrol|hybrid|electric",
-  "awd_standard": boolean,
-  "warranty_years": number,
-  "value_5y_pct": number (residual value % after 5 years),
-  "service_annual": number (EUR/year Austria),
-  "tyres_annual": number (EUR/year),
-  "kfz_annual": number (KFZ insurance EUR/year Austria average),
-  "kasko_annual": number (Kasko insurance EUR/year Austria average),
-  "leasing_monthly": number or null (typical leasing EUR/month 48mo 10% deposit),
-  "equipment_score": number 1-10,
-  "equip": {
-    "hud": boolean, "vent_seats": boolean, "heated_seats": boolean, "massage_seats": boolean,
-    "adaptive_cc": boolean, "lane_assist": boolean, "parking_sensors": boolean,
-    "camera_360": boolean, "wireless_charge": boolean, "pano_roof": boolean,
-    "led_matrix": boolean, "nav": boolean, "keyless": boolean,
-    "trailer_hitch": boolean, "air_susp": boolean, "sound_system": boolean
-  }
+  "power_kw":number,"consumption":number,"trunk_l":number,"seats":number,"dimensions":"LxW cm",
+  "fuel":"diesel|petrol|hybrid|electric","awd_standard":boolean,"warranty_years":number,
+  "value_5y_pct":number,"service_annual":number,"kfz_monthly":number,"kasko_monthly":number,
+  "leasing_first":number,"leasing_monthly":number,"leasing_last":number,
+  "tyre_summer_size":"e.g. 225/45 R18","tyre_winter_size":"e.g. 215/55 R17",
+  "tyre_summer_price_set":number,"tyre_winter_price_set":number,
+  "fuel_price_per_unit":number,"equipment_score":number,
+  "equip":{"hud":bool,"vent_seats":bool,"heated_seats":bool,"massage_seats":bool,"adaptive_cc":bool,"lane_assist":bool,"parking_sensors":bool,"camera_360":bool,"wireless_charge":bool,"pano_roof":bool,"led_matrix":bool,"nav":bool,"keyless":bool,"trailer_hitch":bool,"air_susp":bool,"sound_system":bool}
 }`;
 
-  try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: 'You are a car data expert. Always respond with valid JSON only, no markdown, no extra text.' },
-          { role: 'user', content: prompt }
+  try{
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
+      body:JSON.stringify({
+        model:'llama-3.3-70b-versatile',
+        messages:[
+          {role:'system',content:'You are a car data expert for Austria. Respond ONLY with valid JSON, no markdown, no text.'},
+          {role:'user',content:prompt}
         ],
-        temperature: 0.1,
-        max_tokens: 800,
-        response_format: { type: 'json_object' }
+        temperature:0.1,max_tokens:900,
+        response_format:{type:'json_object'}
       })
     });
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error?.message||`HTTP ${res.status}`);
+    const d=JSON.parse(data.choices[0].message.content);
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || `HTTP ${res.status}`);
-
-    const text = data.choices?.[0]?.message?.content || '';
-    const d = JSON.parse(text);
-
-    const setV = (id, val) => { const el=document.getElementById('inp-'+id); if(el&&val!=null) el.value=val; };
-    setV('power', d.power_kw); setV('consumption', d.consumption); setV('trunk', d.trunk_l);
-    setV('seats', d.seats); setV('dimensions', d.dimensions); setV('warranty', d.warranty_years);
-    setV('service', d.service_annual); setV('tyres', d.tyres_annual);
-    setV('kfz', d.kfz_annual); setV('kasko', d.kasko_annual);
-    setV('leasing', d.leasing_monthly); setV('equipment', d.equipment_score);
-    if (d.fuel) document.getElementById('inp-fuel').value = d.fuel;
-    const price = parseFloat(document.getElementById('inp-price').value)||0;
-    if (price && d.value_5y_pct) setV('value5y', Math.round(price * d.value_5y_pct / 100));
-    if (d.awd_standard) setCb('awd', true);
-    if (d.equip) Object.entries(d.equip).forEach(([k,v])=>setCb(k,v));
+    const sv=(id,val)=>{const el=document.getElementById('inp-'+id);if(el&&val!=null)el.value=val;};
+    sv('power',d.power_kw); sv('consumption',d.consumption); sv('trunk',d.trunk_l);
+    sv('seats',d.seats); sv('dimensions',d.dimensions); sv('warranty',d.warranty_years);
+    sv('service',d.service_annual); sv('kfz',d.kfz_monthly); sv('kasko',d.kasko_monthly);
+    sv('leasing-first',d.leasing_first); sv('leasing-monthly',d.leasing_monthly); sv('leasing-last',d.leasing_last);
+    sv('tyre-summer',d.tyre_summer_size); sv('tyre-winter',d.tyre_winter_size);
+    sv('tyre-summer-price',d.tyre_summer_price_set); sv('tyre-winter-price',d.tyre_winter_price_set);
+    sv('fuel-price',d.fuel_price_per_unit); sv('equipment',d.equipment_score);
+    if(d.fuel)document.getElementById('inp-fuel').value=d.fuel;
+    const price=parseFloat(document.getElementById('inp-price').value)||0;
+    if(price&&d.value_5y_pct)sv('value5y',Math.round(price*d.value_5y_pct/100));
+    if(d.awd_standard)setCb('awd',true);
+    if(d.equip)Object.entries(d.equip).forEach(([k,v])=>setCb(k,v));
 
     document.getElementById('aiFieldsSection').style.display='block';
     document.getElementById('manualToggleSection').style.display='none';
-    showToast('Groq AI doplnilo parametre ✓ — skontroluj a uprav', 'success');
-  } catch(e) {
+    updateCost5yPreview();
+    showToast('Groq doplnilo parametre ✓ — skontroluj a uprav','success');
+  }catch(e){
     console.error(e);
-    showToast('Chyba Groq AI: ' + e.message, 'error');
-  } finally {
+    showToast('Groq chyba: '+e.message,'error');
+  }finally{
     document.getElementById('aiLoadingBar').style.display='none';
     document.getElementById('btnFetchAI').disabled=false;
   }
 }
 
-// ── SAVE CAR ──
-function saveCar() {
-  const make = document.getElementById('inp-make').value.trim();
-  const model = document.getElementById('inp-model').value.trim();
-  const price = parseFloat(document.getElementById('inp-price').value);
-  if (!make||!model) return showToast('Zadaj značku a model', 'error');
-  if (!price) return showToast('Zadaj kúpnu cenu', 'error');
+// ═══ SAVE CAR ═══
+function saveCar(){
+  const make=document.getElementById('inp-make').value.trim();
+  const model=document.getElementById('inp-model').value.trim();
+  const price=parseFloat(document.getElementById('inp-price').value);
+  if(!make||!model)return showToast('Zadaj značku a model','error');
+  if(!price)return showToast('Zadaj kúpnu cenu','error');
 
-  const gN = id => parseFloat(document.getElementById('inp-'+id).value)||null;
-  const gI = id => parseInt(document.getElementById('inp-'+id).value)||null;
-  const gS = id => document.getElementById('inp-'+id).value||'';
+  const gN=id=>parseFloat(document.getElementById('inp-'+id)?.value)||null;
+  const gS=id=>document.getElementById('inp-'+id)?.value||'';
 
-  const data = {
-    make, model, price,
-    year:gS('year'), engine:gS('engine'), dimensions:gS('dimensions'), notes:gS('notes'),
+  const data={
+    make,model,price,
+    year:gS('year'),engine:gS('engine'),dimensions:gS('dimensions'),notes:gS('notes'),
     fuel:document.getElementById('inp-fuel').value||'petrol',
-    power:gN('power'), consumption:gN('consumption'), trunk:gN('trunk'), seats:gI('seats'),
-    warranty:gN('warranty'), value5y:gN('value5y'), service:gN('service'), tyres:gN('tyres'),
-    kfz:gN('kfz'), kasko:gN('kasko'), leasing:gN('leasing'), feeling:gN('feeling'),
-    equipment:gN('equipment'), equip:getEquip(),
+    power:gN('power'),consumption:gN('consumption'),trunk:gN('trunk'),seats:gN('seats'),
+    warranty:gN('warranty'),value5y:gN('value5y'),service:gN('service'),
+    kfz:gN('kfz'),kasko:gN('kasko'),
+    leasingFirst:gN('leasing-first'),leasingMonthly:gN('leasing-monthly'),leasingLast:gN('leasing-last'),
+    mileage:gN('mileage'),fuelPrice:gN('fuel-price'),
+    tyreSummer:gS('tyre-summer'),tyreWinter:gS('tyre-winter'),
+    tyreSummerPrice:gN('tyre-summer-price'),tyreWinterPrice:gN('tyre-winter-price'),
+    feeling:gN('feeling'),equipment:gN('equipment'),
+    equip:getEquip(),
   };
 
-  if (editingId) {
-    const i = cars.findIndex(c=>c.id===editingId);
-    if (i!==-1) cars[i]={...cars[i],...data};
-    showToast(`${make} ${model} aktualizovaný ✓`, 'success');
-  } else {
+  if(editingId){
+    const i=cars.findIndex(c=>c.id===editingId);
+    if(i!==-1)cars[i]={...cars[i],...data};
+    showToast(`${make} ${model} aktualizovaný ✓`,'success');
+  }else{
     cars.push({id:Date.now(),...data});
-    showToast(`${make} ${model} pridaný ✓`, 'success');
+    showToast(`${make} ${model} pridaný ✓`,'success');
   }
-  saveCars(); closeModal(); renderCarsGrid(); renderSummary();
+  saveCars();closeModal();renderCarsGrid();renderSummary();
+  if(sheetsUrl)syncNow();
 }
 
-function deleteCar(id) {
+function deleteCar(id){
   cars=cars.filter(c=>c.id!==id);
-  saveCars(); renderCarsGrid(); renderSummary();
-  showToast('Auto odstránené', 'success');
+  saveCars();renderCarsGrid();renderSummary();
+  if(sheetsUrl)syncNow();
+  showToast('Auto odstránené','success');
 }
-function saveCars() { localStorage.setItem('autoscore_cars', JSON.stringify(cars)); }
+function saveCars(){localStorage.setItem('autoscore_cars',JSON.stringify(cars));}
 
-// ── SCORING ──
-function scoreCar(car, all) {
+// ═══ SCORING ═══
+function scoreCar(car,all){
   const clamp=v=>Math.max(0,Math.min(100,v));
   const invN=(v,mn,mx)=>mx===mn?65:clamp(Math.round((1-(v-mn)/(mx-mn))*100));
   const normN=(v,mn,mx)=>mx===mn?65:clamp(Math.round(((v-mn)/(mx-mn))*100));
   const vals=key=>all.map(c=>c[key]).filter(x=>x!=null&&x>0);
   const s={};
 
-  const prices=vals('price');
-  s['Cena kúpy']=car.price?invN(car.price,Math.min(...prices),Math.max(...prices)):50;
+  s['Cena kúpy']=car.price?invN(car.price,Math.min(...vals('price')),Math.max(...vals('price'))):50;
+
   const v5=vals('value5y');
   s['Hodnota po 5r']=car.value5y&&v5.length>1?normN(car.value5y,Math.min(...v5),Math.max(...v5)):(car.value5y?60:40);
-  const ls=vals('leasing');
-  s['Leasing']=!car.leasing?80:(ls.length>1?invN(car.leasing,Math.min(...ls),Math.max(...ls)):50);
-  const annual=c=>(c.service||0)+(c.tyres||0)+(c.kfz||0)+(c.kasko||0);
-  const annuals=all.map(annual);
-  s['Ročné náklady']=annual(car)?invN(annual(car),Math.min(...annuals),Math.max(...annuals)):50;
+
+  const hasLeasing=car.leasingMonthly||car.leasingFirst||car.leasingLast;
+  const leasingTotal5y=hasLeasing?(car.leasingFirst||0)+(car.leasingMonthly||0)*60+(car.leasingLast||0):null;
+  const allLease=all.map(c=>c.leasingMonthly||(c.leasingFirst||0)+(c.leasingMonthly||0)*60+(c.leasingLast||0)).filter(x=>x>0);
+  s['Leasing']=!leasingTotal5y?80:(allLease.length>1?invN(leasingTotal5y,Math.min(...allLease),Math.max(...allLease)):50);
+
+  // 5y total cost score
+  const c5=calc5y(car);
+  const all5y=all.map(c=>calc5y(c).total).filter(x=>x>0);
+  s['Celk. náklady 5r']=c5.total&&all5y.length>1?invN(c5.total,Math.min(...all5y),Math.max(...all5y)):(c5.total?60:50);
+
   const cs=vals('consumption');
   s['Spotreba']=car.consumption&&cs.length>1?invN(car.consumption,Math.min(...cs),Math.max(...cs)):(car.consumption?60:50);
+
   const ws=vals('warranty');
   s['Záruka']=car.warranty&&ws.length>1?normN(car.warranty,Math.min(...ws),Math.max(...ws)):(car.warranty?65:40);
+
   const ts=vals('trunk');
   const trS=car.trunk&&ts.length>1?normN(car.trunk,Math.min(...ts),Math.max(...ts)):(car.trunk?65:50);
   const seS=car.seats?clamp(((car.seats-2)/5)*100):50;
   s['Priestor / kufor']=Math.round((trS+seS)/2);
+
   const ps=vals('power');
   s['Výkon']=car.power&&ps.length>1?normN(car.power,Math.min(...ps),Math.max(...ps)):(car.power?65:50);
+
   const equipCount=car.equip?Object.values(car.equip).filter(Boolean).length:0;
   s['Výbava']=clamp((car.equipment?car.equipment*8:50)+Math.min(20,equipCount*1.3));
+
   s['Pocit z auta']=car.feeling?clamp(car.feeling*10):50;
+
   const relMap={diesel:72,petrol:75,hybrid:68,electric:65};
   s['Spoľahlivosť']=clamp((relMap[car.fuel]||65)+(car.equip?.awd?5:0));
 
   const totalW=Object.values(weights).reduce((a,b)=>a+b,0);
   const total=Math.round(Object.entries(weights).reduce((acc,[k,w])=>acc+(s[k]||50)*(w/totalW),0));
-  return {total, breakdown:s};
+  return{total,breakdown:s};
 }
 
-// ── RENDER CARS ──
-const FL={diesel:'Diesel',petrol:'Benzín',hybrid:'Hybrid',electric:'Elektro'};
-function renderCarsGrid() {
-  const grid=document.getElementById('carsGrid'), count=document.getElementById('carCount');
-  if (!cars.length) {
+// ═══ RENDER CARS ═══
+function renderCarsGrid(){
+  const grid=document.getElementById('carsGrid'),count=document.getElementById('carCount');
+  if(!cars.length){
     count.textContent='Zatiaľ žiadne autá';
     grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🚗</div><div class="empty-title">Žiadne autá</div><div class="empty-sub">Pridaj prvé auto a začni porovnávať</div><button class="btn btn-primary" onclick="openModal(null)">+ Pridať auto</button></div>`;
     return;
@@ -705,9 +980,9 @@ function renderCarsGrid() {
     const {total}=scoreCar(car,cars);
     const sc=total>=70?'score-high':total>=50?'score-mid':'score-low';
     const bc=total>=70?'var(--green)':total>=50?'var(--accent)':'var(--red)';
-    const ann=(car.service||0)+(car.tyres||0)+(car.kfz||0)+(car.kasko||0);
+    const {total:cost5y}=calc5y(car);
     const eq=car.equip||{};
-    const tags=[eq.awd?'<span class="equip-tag awd">AWD</span>':'',eq.hud?'<span class="equip-tag">HUD</span>':'',eq.vent_seats?'<span class="equip-tag">Vent. sed.</span>':'',eq.pano_roof?'<span class="equip-tag">Panoráma</span>':'',eq.massage_seats?'<span class="equip-tag">Masáž</span>':''].filter(Boolean).join('');
+    const tags=[eq.awd?'<span class="equip-tag awd">AWD</span>':'',eq.hud?'<span class="equip-tag">HUD</span>':'',eq.vent_seats?'<span class="equip-tag">Vent. sed.</span>':'',eq.pano_roof?'<span class="equip-tag">Panoráma</span>':''].filter(Boolean).join('');
     return `<div class="car-card">
       <div class="car-card-header" onclick="showDetailView(${car.id})">
         <div><div class="car-card-name">${car.make} ${car.model}</div><div class="car-card-sub">${car.year||''} ${car.engine||''} <span class="tag tag-${car.fuel}">${FL[car.fuel]||''}</span></div>${tags?`<div class="equip-tags">${tags}</div>`:''}</div>
@@ -718,30 +993,31 @@ function renderCarsGrid() {
         <div class="car-mini-stats">
           <div><div class="mini-stat-label">Cena</div><div class="mini-stat-value">${car.price?'€'+car.price.toLocaleString():'—'}</div></div>
           <div><div class="mini-stat-label">Spotreba</div><div class="mini-stat-value">${car.consumption?car.consumption+'l/100':'—'}</div></div>
-          <div><div class="mini-stat-label">Kufor</div><div class="mini-stat-value">${car.trunk?car.trunk+'l':'—'}</div></div>
-          <div><div class="mini-stat-label">Náklady/rok</div><div class="mini-stat-value">${ann?'€'+ann.toLocaleString():'—'}</div></div>
+          <div><div class="mini-stat-label">Náklady 5r</div><div class="mini-stat-value">${cost5y?'€'+cost5y.toLocaleString():'—'}</div></div>
+          <div><div class="mini-stat-label">Mesačne</div><div class="mini-stat-value">${car.leasingMonthly?'€'+car.leasingMonthly+'/m':car.kfz||car.kasko?'€'+Math.round(((car.kfz||0)+(car.kasko||0)))+'/m':'—'}</div></div>
         </div>
       </div>
       <div class="car-card-actions">
         <button class="btn btn-edit btn-sm" style="flex:1" onclick="openModal(${car.id})">✏️ Editovať</button>
         <button class="btn btn-secondary btn-sm" style="flex:1" onclick="showDetailView(${car.id})">Detail →</button>
-        <button class="btn btn-danger btn-sm" onclick="if(confirm('Odstrániť ${car.make} ${car.model}?'))deleteCar(${car.id})">🗑</button>
+        <button class="btn btn-danger btn-sm" onclick="if(confirm('Odstrániť?'))deleteCar(${car.id})">🗑</button>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── RENDER DETAIL ──
-function renderDetail(carId) {
-  const car=cars.find(c=>c.id===carId); if(!car) return;
+// ═══ RENDER DETAIL ═══
+function renderDetail(carId){
+  const car=cars.find(c=>c.id===carId);if(!car)return;
   const {total,breakdown}=scoreCar(car,cars);
   const bc=total>=70?'var(--green)':total>=50?'var(--accent)':'var(--red)';
-  const ann=(car.service||0)+(car.tyres||0)+(car.kfz||0)+(car.kasko||0);
   const eq=car.equip||{};
   const allEq=[{id:'awd',label:'AWD / 4x4'},...EQUIPMENT];
   const hasEq=allEq.filter(e=>eq[e.id]);
+  const {items,total:cost5y}=calc5y(car);
+  const hasLeasing=car.leasingFirst||car.leasingMonthly||car.leasingLast;
 
-  const breakdownHTML=Object.entries(breakdown).map(([k,v])=>{
+  const bHTML=Object.entries(breakdown).map(([k,v])=>{
     const c=v>=70?'var(--green)':v>=50?'var(--accent)':'var(--red)';
     return `<div class="breakdown-item"><div class="breakdown-name">${k}</div><div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:${v}%;background:${c}"></div></div><div class="breakdown-score" style="color:${c}">${v}/100</div><div class="breakdown-weight">${weights[k]||0}%</div></div>`;
   }).join('');
@@ -755,75 +1031,119 @@ function renderDetail(carId) {
       </div>
       <div class="detail-score-big"><div class="detail-score-number" style="color:${bc}">${total}</div><div class="detail-score-label">Celkové skóre</div></div>
     </div>
+
+    <!-- 5Y COST BIG -->
+    <div class="cost5y-big">
+      <div class="cost5y-big-title">💰 Celkové náklady za 5 rokov</div>
+      <div class="cost5y-big-grid">
+        ${items.map(i=>`<div class="cost5y-big-item"><div class="cost5y-big-label">${i.label}</div><div class="cost5y-big-value">${i.value!=null&&i.value>0?'€'+i.value.toLocaleString():'—'}</div></div>`).join('')}
+      </div>
+      <div class="cost5y-big-total">
+        <span style="font-weight:600">Celkom za 5 rokov</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--accent)">${cost5y?'€'+cost5y.toLocaleString():'—'}</span>
+      </div>
+      ${car.mileage?`<div style="padding:8px 16px;font-size:12px;color:var(--text3)">Ročný nájazd: ${car.mileage.toLocaleString()} km · Cena paliva: €${car.fuelPrice||'—'}/l · Pneumatiky každých 40 000 km</div>`:''}
+    </div>
+
     <div class="score-breakdown">
       <div class="breakdown-header">📊 Rozklad skóre <span style="font-size:13px;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--text2)">(parameter · skóre · váha)</span></div>
-      ${breakdownHTML}
+      ${bHTML}
     </div>
+
     <div class="detail-grid">
       <div class="detail-section">
-        <div class="detail-section-header">💰 Financie</div>
+        <div class="detail-section-header">💳 Kúpa & Hodnota</div>
         <div class="detail-row"><span class="detail-row-label">Kúpna cena</span><span class="detail-row-value">€${car.price?.toLocaleString()}</span></div>
         <div class="detail-row"><span class="detail-row-label">Hodnota po 5 rokoch</span><span class="detail-row-value">${car.value5y?'€'+car.value5y.toLocaleString():'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Odpis za 5 rokov</span><span class="detail-row-value">${car.value5y?'€'+(car.price-car.value5y).toLocaleString():'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Leasing / mesiac</span><span class="detail-row-value">${car.leasing?'€'+car.leasing:'Hotovosť'}</span></div>
+        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Odpis za 5 rokov</strong></span><span class="detail-row-value"><strong>${car.value5y?'€'+(car.price-car.value5y).toLocaleString():'—'}</strong></span></div>
       </div>
+
+      ${hasLeasing?`<div class="detail-section">
+        <div class="detail-section-header">📄 Leasing</div>
+        <div class="detail-row"><span class="detail-row-label">Prvá splátka</span><span class="detail-row-value">${car.leasingFirst?'€'+car.leasingFirst.toLocaleString():'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Mesačná splátka</span><span class="detail-row-value">${car.leasingMonthly?'€'+car.leasingMonthly+'/mes':'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Posledná splátka</span><span class="detail-row-value">${car.leasingLast?'€'+car.leasingLast.toLocaleString():'—'}</span></div>
+        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Leasing spolu 5r</strong></span><span class="detail-row-value"><strong>€${((car.leasingFirst||0)+(car.leasingMonthly||0)*60+(car.leasingLast||0)).toLocaleString()}</strong></span></div>
+      </div>`:''}
+
       <div class="detail-section">
-        <div class="detail-section-header">🔧 Ročné náklady</div>
-        <div class="detail-row"><span class="detail-row-label">Servis</span><span class="detail-row-value">${car.service?'€'+car.service:'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Pneumatiky</span><span class="detail-row-value">${car.tyres?'€'+car.tyres:'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">KFZ poistenie</span><span class="detail-row-value">${car.kfz?'€'+car.kfz:'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Kasko poistenie</span><span class="detail-row-value">${car.kasko?'€'+car.kasko:'—'}</span></div>
-        <div class="detail-row" style="background:var(--bg3)"><span class="detail-row-label"><strong>Spolu / rok</strong></span><span class="detail-row-value"><strong>${ann?'€'+ann.toLocaleString():'—'}</strong></span></div>
+        <div class="detail-section-header">🛡️ Poistenie</div>
+        <div class="detail-row"><span class="detail-row-label">KFZ (mesačne)</span><span class="detail-row-value">${car.kfz?'€'+car.kfz+'/mes':'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Kasko (mesačne)</span><span class="detail-row-value">${car.kasko?'€'+car.kasko+'/mes':'—'}</span></div>
+        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Poistenie 5r</strong></span><span class="detail-row-value"><strong>${car.kfz||car.kasko?'€'+Math.round(((car.kfz||0)+(car.kasko||0))*60).toLocaleString():'—'}</strong></span></div>
       </div>
+
+      <div class="detail-section">
+        <div class="detail-section-header">⛽ Palivo & Nájazd</div>
+        <div class="detail-row"><span class="detail-row-label">Ročný nájazd</span><span class="detail-row-value">${car.mileage?car.mileage.toLocaleString()+' km':'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Spotreba</span><span class="detail-row-value">${car.consumption?car.consumption+' l/100km':'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Cena paliva</span><span class="detail-row-value">${car.fuelPrice?'€'+car.fuelPrice+'/l':'—'}</span></div>
+        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Palivo ročne</strong></span><span class="detail-row-value"><strong>${car.consumption&&car.mileage&&car.fuelPrice?'€'+Math.round((car.consumption/100)*car.mileage*car.fuelPrice).toLocaleString():'—'}</strong></span></div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-header">🛞 Pneumatiky</div>
+        <div class="detail-row"><span class="detail-row-label">Letné rozmer</span><span class="detail-row-value">${car.tyreSummer||'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Letné sada</span><span class="detail-row-value">${car.tyreSummerPrice?'€'+car.tyreSummerPrice:'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Zimné rozmer</span><span class="detail-row-value">${car.tyreWinter||'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Zimné sada</span><span class="detail-row-value">${car.tyreWinterPrice?'€'+car.tyreWinterPrice:'—'}</span></div>
+        <div class="detail-row detail-highlight"><span class="detail-row-label"><strong>Pneumatiky 5r</strong></span><span class="detail-row-value"><strong>${car.tyreSummerPrice||car.tyreWinterPrice?'€'+(Math.max(1,Math.ceil((car.mileage||20000)*5/40000))*((car.tyreSummerPrice||0)+(car.tyreWinterPrice||0))).toLocaleString():'—'}</strong></span></div>
+      </div>
+
       <div class="detail-section">
         <div class="detail-section-header">⚙️ Technické</div>
         <div class="detail-row"><span class="detail-row-label">Výkon</span><span class="detail-row-value">${car.power?car.power+' kW / '+(car.power*1.36|0)+' PS':'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Spotreba</span><span class="detail-row-value">${car.consumption?car.consumption+' l/100km':'—'}</span></div>
         <div class="detail-row"><span class="detail-row-label">Palivo</span><span class="detail-row-value">${FL[car.fuel]||'—'}</span></div>
         <div class="detail-row"><span class="detail-row-label">Pohon</span><span class="detail-row-value">${eq.awd?'🟣 AWD / 4x4':'FWD / RWD'}</span></div>
         <div class="detail-row"><span class="detail-row-label">Záruka</span><span class="detail-row-value">${car.warranty?car.warranty+' roky':'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Servis / rok</span><span class="detail-row-value">${car.service?'€'+car.service:'—'}</span></div>
       </div>
+
       <div class="detail-section">
         <div class="detail-section-header">📐 Rozmery</div>
         <div class="detail-row"><span class="detail-row-label">Objem kufra</span><span class="detail-row-value">${car.trunk?car.trunk+' l':'—'}</span></div>
         <div class="detail-row"><span class="detail-row-label">Počet miest</span><span class="detail-row-value">${car.seats||'—'}</span></div>
         <div class="detail-row"><span class="detail-row-label">Rozmery</span><span class="detail-row-value">${car.dimensions||'—'}</span></div>
       </div>
+
       ${hasEq.length?`<div class="detail-section">
         <div class="detail-section-header">✅ Výbava</div>
         ${hasEq.map(e=>`<div class="detail-row"><span class="detail-row-label">${e.label.replace(/^\S+\s/,'')}</span><span style="color:var(--green)">✓</span></div>`).join('')}
       </div>`:''}
+
       <div class="detail-section">
         <div class="detail-section-header">⭐ Subjektívne</div>
         <div class="detail-row"><span class="detail-row-label">Pocit z auta</span><span class="detail-row-value">${car.feeling?car.feeling+'/10':'—'}</span></div>
-        <div class="detail-row"><span class="detail-row-label">Výbava / tech skóre</span><span class="detail-row-value">${car.equipment?car.equipment+'/10':'—'}</span></div>
+        <div class="detail-row"><span class="detail-row-label">Výbava / tech</span><span class="detail-row-value">${car.equipment?car.equipment+'/10':'—'}</span></div>
       </div>
     </div>
+
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn btn-edit" onclick="openModal(${car.id})">✏️ Editovať auto</button>
       <button class="btn btn-danger" onclick="if(confirm('Odstrániť?')){deleteCar(${car.id});showView('cars',document.querySelector('.tab-btn'))}">🗑 Odstrániť</button>
     </div>`;
 }
 
-// ── RENDER SUMMARY ──
-function renderSummary() {
+// ═══ RENDER SUMMARY ═══
+function renderSummary(){
   const el=document.getElementById('summaryContent');
-  if (!cars.length) { el.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Najprv pridaj autá</div><div class="empty-sub">Zhrnutie sa zobrazí po pridaní aspoň jedného auta</div></div>`; return; }
+  if(!cars.length){el.innerHTML=`<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Najprv pridaj autá</div><div class="empty-sub">Zhrnutie sa zobrazí po pridaní aspoň jedného auta</div></div>`;return;}
   const scored=cars.map(c=>({car:c,...scoreCar(c,cars)})).sort((a,b)=>b.total-a.total);
-  const pC=['first','second','third'], pE=['🥇','🥈','🥉'];
+  const pC=['first','second','third'],pE=['🥇','🥈','🥉'];
 
   const podium=scored.slice(0,3).map((it,i)=>{
     const bc=it.total>=70?'var(--green)':it.total>=50?'var(--accent)':'var(--red)';
-    return `<div class="podium-item ${pC[i]}" onclick="showDetailView(${it.car.id})"><div class="podium-rank">${pE[i]}</div><div class="podium-name">${it.car.make} ${it.car.model}</div><div class="podium-sub">${it.car.year||''} ${it.car.engine||''}</div><div class="podium-score" style="color:${bc}">${it.total}</div></div>`;
+    const c5=calc5y(it.car);
+    return `<div class="podium-item ${pC[i]}" onclick="showDetailView(${it.car.id})"><div class="podium-rank">${pE[i]}</div><div class="podium-name">${it.car.make} ${it.car.model}</div><div class="podium-sub">${it.car.year||''} ${it.car.engine||''}</div><div class="podium-score" style="color:${bc}">${it.total}</div>${c5.total?`<div style="font-size:11px;color:var(--text3);margin-top:4px">5r: €${c5.total.toLocaleString()}</div>`:''}</div>`;
   }).join('');
 
   const rows=scored.map((it,i)=>{
-    const ann=(it.car.service||0)+(it.car.tyres||0)+(it.car.kfz||0)+(it.car.kasko||0);
+    const c5=calc5y(it.car);
     const bc=it.total>=70?'var(--green)':it.total>=50?'var(--accent)':'var(--red)';
-    return `<div class="summary-table-row" onclick="showDetailView(${it.car.id})">
+    return `<div class="str" onclick="showDetailView(${it.car.id})">
       <div style="display:flex;align-items:center;gap:8px">${i<3?`<span class="rank-badge rank-${i+1}">${i+1}</span>`:`<span style="width:24px;text-align:center;color:var(--text3);font-size:13px">${i+1}</span>`}<div><div class="summary-car-name">${it.car.make} ${it.car.model}</div><div class="summary-car-sub">${it.car.year||''} ${it.car.engine||''}${it.car.equip?.awd?' · AWD':''}</div></div></div>
       <div class="summary-cell">${it.car.price?'€'+it.car.price.toLocaleString():'—'}</div>
-      <div class="summary-cell">${ann?'€'+ann.toLocaleString():'—'}</div>
+      <div class="summary-cell">${c5.total?'€'+c5.total.toLocaleString():'—'}</div>
       <div class="summary-cell">${it.car.consumption?it.car.consumption+'l':'—'}</div>
       <div style="display:flex;align-items:center;gap:8px"><span class="summary-score-num" style="color:${bc}">${it.total}</span><div style="flex:1;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;min-width:40px"><div style="height:100%;width:${it.total}%;background:${bc};border-radius:2px"></div></div></div>
       <div><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();showDetailView(${it.car.id})">Detail →</button></div>
@@ -831,45 +1151,46 @@ function renderSummary() {
   }).join('');
 
   const w=scored[0];
+  const wc5=calc5y(w.car);
   el.innerHTML=`
-    <div class="ai-reason"><strong>💡 Odporúčanie:</strong> Na základe profilu (rodinné auto — spoľahlivosť, priestor, výbava, výkon) najlepšie vychádza <strong>${w.car.make} ${w.car.model}</strong> so skóre <strong>${w.total}/100</strong>.${scored.length>1?` Druhé miesto: <strong>${scored[1].car.make} ${scored[1].car.model}</strong> (${scored[1].total}/100).`:''} Klikni na auto pre rozklad skóre.</div>
+    <div class="ai-reason"><strong>💡 Odporúčanie:</strong> Na základe profilu najlepšie vychádza <strong>${w.car.make} ${w.car.model}</strong> so skóre <strong>${w.total}/100</strong>${wc5.total?` a celkovými nákladmi za 5 rokov <strong>€${wc5.total.toLocaleString()}</strong>`:''}. ${scored.length>1?`Druhé miesto: <strong>${scored[1].car.make} ${scored[1].car.model}</strong> (${scored[1].total}/100).`:''}</div>
     <div class="summary-podium">${podium}</div>
     <div class="summary-table">
-      <div class="summary-table-header"><div>Auto</div><div>Cena</div><div>Náklady/rok</div><div>Spotreba</div><div>Skóre</div><div></div></div>
+      <div class="sth"><div>Auto</div><div>Cena</div><div>Náklady 5r</div><div>Spotreba</div><div>Skóre</div><div></div></div>
       ${rows}
     </div>`;
 }
 
-// ── WEIGHTS ──
-function renderWeightsPanel() {
+// ═══ WEIGHTS ═══
+function renderWeightsPanel(){
   document.getElementById('weightsGrid').innerHTML=Object.entries(weights).map(([k,v])=>`
     <div><div class="weight-item-header"><span class="weight-item-label">${k}</span><span class="weight-item-value" id="wv-${k.replace(/[^\w]/g,'_')}">${v}%</span></div>
     <input type="range" class="weight-slider" min="0" max="30" value="${v}" oninput="updateWeight('${k}',this.value)"></div>`).join('');
   updateWeightsTotal();
 }
-function updateWeight(k,v) {
+function updateWeight(k,v){
   weights[k]=parseInt(v);
   const el=document.getElementById('wv-'+k.replace(/[^\w]/g,'_'));
-  if(el) el.textContent=v+'%';
+  if(el)el.textContent=v+'%';
   updateWeightsTotal();
   localStorage.setItem('autoscore_weights',JSON.stringify(weights));
   renderCarsGrid();
 }
-function updateWeightsTotal() {
+function updateWeightsTotal(){
   const t=Object.values(weights).reduce((a,b)=>a+b,0);
   const el=document.getElementById('weightsTotalDisplay');
   el.textContent=`Súčet váh: ${t}% ${t!==100?'⚠️ (ideálne = 100%)':'✓'}`;
   el.style.color=t===100?'var(--green)':'var(--accent)';
 }
-function resetWeights() {
+function resetWeights(){
   weights={...DEFAULT_WEIGHTS};
   localStorage.setItem('autoscore_weights',JSON.stringify(weights));
-  renderWeightsPanel(); renderCarsGrid();
+  renderWeightsPanel();renderCarsGrid();
   showToast('Váhy resetované ✓','success');
 }
 
-// ── TOAST ──
-function showToast(msg, type='success') {
+// ═══ TOAST ═══
+function showToast(msg,type='success'){
   const el=document.getElementById('toast');
   el.textContent=(type==='success'?'✓ ':'✕ ')+msg;
   el.className=`toast ${type} show`;
